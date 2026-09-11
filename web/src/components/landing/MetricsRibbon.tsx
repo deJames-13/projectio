@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useScrollReveal } from "~/hooks/useParallax";
+import { useScrollReveal, useLocomotiveCards } from "~/hooks/useParallax";
 
 export const MetricsRibbon: React.FC = () => {
-  const { ref, isRevealed } = useScrollReveal(0.2);
+  const { ref, isRevealed } = useScrollReveal(0.12);
+  const cardsContainerRef = useLocomotiveCards(0.1);
 
   // Animated values
   const [latency, setLatency] = useState(0);
@@ -13,6 +14,18 @@ export const MetricsRibbon: React.FC = () => {
 
   useEffect(() => {
     if (!isRevealed) return;
+
+    // Respect reduced motion
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      setLatency(35);
+      setUptime(99.99);
+      setNavigable(100);
+      return;
+    }
 
     // Smooth eased count-up duration: 1200ms
     const duration = 1200;
@@ -25,7 +38,7 @@ export const MetricsRibbon: React.FC = () => {
       // Ease-out cubic formula: 1 - Math.pow(1 - progress, 3)
       const easeOut = 1 - Math.pow(1 - progress, 3);
 
-      setLatency(Math.round(easeOut * 35));
+      setLatency(Math.max(1, Math.round(easeOut * 35)));
       setUptime(Number((easeOut * 99.99).toFixed(2)));
       setNavigable(Math.round(easeOut * 100));
 
@@ -75,35 +88,45 @@ export const MetricsRibbon: React.FC = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white dark:bg-slate-900/90 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs p-6 lg:p-8 transition-colors duration-200">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-800">
-          {metrics.map((item, idx) => (
-            <div
-              key={idx}
-              className={`flex flex-col loco-card loco-delay-${idx + 1} ${
-                idx > 0 ? "pt-6 sm:pt-0 sm:pl-6 lg:pl-8" : ""
-              }`}
-            >
-              <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">
-                {item.value}
-              </div>
-              <div className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mt-2 font-mono">
-                {item.label}
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                {item.detail}
-              </p>
+          <div
+            ref={cardsContainerRef}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100 dark:divide-slate-800"
+          >
+            {metrics.map((item, idx) => (
+              <div
+                key={idx}
+                className={`flex flex-col loco-card loco-delay-${idx + 1} ${
+                  isRevealed ? "is-inview" : ""
+                } ${idx > 0 ? "pt-6 sm:pt-0 sm:pl-6 lg:pl-8" : ""}`}
+              >
+                <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-mono tracking-tight">
+                  {item.value}
+                </div>
+                <div className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mt-2 font-mono">
+                  {item.label}
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                  {item.detail}
+                </p>
 
-              {/* Animated filling telemetry bar */}
-              <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden">
+                {/* Animated filling telemetry bar */}
                 <div
-                  className="bg-blue-600 dark:bg-blue-500 h-1.5 rounded-full transition-all duration-1000 ease-out"
-                  style={{ width: item.barPercent }}
-                />
+                  className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden"
+                  role="progressbar"
+                  aria-valuenow={parseFloat(item.barPercent)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label={`${item.label} telemetry`}
+                >
+                  <div
+                    className="bg-blue-600 dark:bg-blue-500 h-1.5 rounded-full transition-all duration-1000 ease-out"
+                    style={{ width: item.barPercent }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
       </div>
     </section>
   );

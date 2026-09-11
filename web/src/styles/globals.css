@@ -322,6 +322,7 @@
 }
 
 .loco-card.is-inview,
+.parallax-reveal.is-revealed .loco-card,
 [data-scroll].is-inview {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale(1);
