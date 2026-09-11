@@ -29,6 +29,7 @@ export * from './settings/SettingsView';
 // Modals
 export * from './modals/CommandPalette';
 export * from './modals/NewTaskModal';
+export * from './modals/ImageCropModal';
 
 // Auth
 export * from './auth/LoginPage';
@@ -36,3 +37,6 @@ export * from './auth/RegisterPage';
 
 // Landing
 export * from './landing/LandingPage';
+
+// Common UI
+export * from './ui/UserAvatar';

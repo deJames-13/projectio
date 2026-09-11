@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { 
-  Building2, 
-  Users, 
-  ShieldCheck, 
-  Plus, 
-  Check, 
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  Building2,
+  Users,
+  ShieldCheck,
+  Plus,
+  Check,
   Mail,
   User,
   CheckCircle2,
@@ -15,9 +15,16 @@ import {
   AtSign,
   Briefcase,
   CheckSquare,
-  FolderGit2
+  FolderGit2,
+  Upload,
+  RotateCcw,
+  Info,
+  Crop as CropIcon
 } from 'lucide-react';
 import type { Member } from '~/types';
+import { UserAvatar } from '~/components/ui/UserAvatar';
+import { useUploadThing } from '~/utils/uploadthing';
+import { ImageCropModal } from '~/components/modals/ImageCropModal';
 
 export interface SettingsViewProps {
   currentUser: Member;
@@ -32,39 +39,6 @@ export interface SettingsViewProps {
   }) => Promise<void>;
   initialTab?: 'profile' | 'workspace' | 'members' | 'security';
 }
-
-const AVATAR_PRESETS = [
-  { 
-    id: 'preset-1', 
-    label: 'Fullstack Dev', 
-    url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' 
-  },
-  { 
-    id: 'preset-2', 
-    label: 'Systems Architect', 
-    url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' 
-  },
-  { 
-    id: 'preset-3', 
-    label: 'Product Designer', 
-    url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80' 
-  },
-  { 
-    id: 'preset-4', 
-    label: 'Staff Engineer', 
-    url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' 
-  },
-  { 
-    id: 'preset-5', 
-    label: 'Engineering Lead', 
-    url: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80' 
-  },
-  { 
-    id: 'preset-6', 
-    label: 'Geometric Brand', 
-    url: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBPiBHbzlRcYg-VzCqa9abHJPIL9BG3hsGjYrg1YuEcxLAvZq_28HBmgi_vVLY6LXX7ZLaii2TP2mN0ONbeRSEH2c_Ibxi5ywHFNR7lVUkiKau_ETuEQldb9XY_n-cmgh6J8dkSEkOfWl_rc3FR_aARvAIKhgC0Yn2AH8nQGjbcdI-uqCEYXbZcXPFET1BithmzsIN6cfFU0OX4wNbW_8_sJ44MN0imLRt2A1p_RKkP2z0-H1SMUwtl' 
-  },
-];
 
 const STANDARD_ROLES = [
   'Product Lead',
@@ -91,7 +65,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [name, setName] = useState(currentUser.name);
   const [username, setUsername] = useState(currentUser.username ?? '');
   const [avatar, setAvatar] = useState(currentUser.avatar);
-  const [customAvatarInput, setCustomAvatarInput] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isResettingAvatar, setIsResettingAvatar] = useState(false);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState<string | null>(null);
+  const [cropFileName, setCropFileName] = useState<string>("avatar.jpg");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedRole, setSelectedRole] = useState(
     STANDARD_ROLES.includes(currentUser.role) ? currentUser.role : 'Custom'
   );
@@ -137,7 +117,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
   // Validation
   const isNameEmpty = !name.trim();
-  const hasUnsavedChanges = 
+  const hasUnsavedChanges =
     name !== currentUser.name ||
     avatar !== currentUser.avatar ||
     effectiveRole !== currentUser.role;
@@ -171,10 +151,142 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     }
   };
 
-  const handleApplyCustomAvatarUrl = () => {
-    if (!customAvatarInput.trim()) return;
-    setAvatar(customAvatarInput.trim());
-    setCustomAvatarInput('');
+  // UploadThing hook for profile picture uploads (< 1MB)
+  const { startUpload, isUploading } = useUploadThing("profilePicture", {
+    onClientUploadComplete: async (res) => {
+      const uploadedUrl = res?.[0]?.ufsUrl ?? res?.[0]?.url;
+      if (uploadedUrl) {
+        setAvatar(uploadedUrl);
+        setUploadError(null);
+        try {
+          if (onUpdateProfile) {
+            await onUpdateProfile({
+              name: name.trim(),
+              role: effectiveRole || 'Member',
+              avatar: uploadedUrl,
+            });
+          }
+          setProfileSuccessMsg('Profile picture uploaded and saved successfully across your workspace.');
+          setTimeout(() => setProfileSuccessMsg(null), 5000);
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : 'Failed to update profile picture.';
+          setProfileErrorMsg(msg);
+        }
+      }
+    },
+    onUploadError: (err) => {
+      const msg = err.message || 'Upload failed. Please ensure UPLOADTHING_TOKEN is set in your .env file.';
+      setUploadError(msg);
+    },
+  });
+
+  const handleFileSelection = (file: File) => {
+    setUploadError(null);
+
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setUploadError('Invalid file type. Please upload a PNG, JPG, or WEBP image.');
+      return;
+    }
+
+    // Safeguard check on input file size
+    if (file.size > 15 * 1024 * 1024) {
+      setUploadError('Source image is too large (> 15MB). Please select a smaller file.');
+      return;
+    }
+
+    // Create object URL and open 1:1 crop modal
+    const objectUrl = URL.createObjectURL(file);
+    setCropImageSrc(objectUrl);
+    setCropFileName(file.name);
+    setCropModalOpen(true);
+  };
+
+  const handleOpenReCrop = () => {
+    if (!avatar) return;
+    setUploadError(null);
+    setCropImageSrc(avatar);
+    setCropFileName(`${currentUser.username ?? 'user'}-avatar.jpg`);
+    setCropModalOpen(true);
+  };
+
+  const handleCropComplete = async (croppedFile: File) => {
+    // Strict 1MB check on final cropped export
+    if (croppedFile.size > 1024 * 1024) {
+      setUploadError('Cropped image exceeds 1MB limit. Please adjust zoom and try again.');
+      return;
+    }
+
+    try {
+      await startUpload([croppedFile]);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Upload failed. Please try again.';
+      setUploadError(msg);
+    } finally {
+      if (cropImageSrc?.startsWith('blob:')) {
+        URL.revokeObjectURL(cropImageSrc);
+      }
+    }
+  };
+
+  const handleCloseCropModal = () => {
+    if (cropImageSrc?.startsWith('blob:')) {
+      URL.revokeObjectURL(cropImageSrc);
+    }
+    setCropModalOpen(false);
+    setCropImageSrc(null);
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      void handleFileSelection(file);
+    }
+    e.target.value = '';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      void handleFileSelection(file);
+    }
+  };
+
+  const handleResetToInitial = async () => {
+    setIsResettingAvatar(true);
+    setUploadError(null);
+    try {
+      setAvatar('');
+      if (onUpdateProfile) {
+        await onUpdateProfile({
+          name: name.trim(),
+          role: effectiveRole || 'Member',
+          avatar: '',
+        });
+      }
+      setProfileSuccessMsg('Profile picture reset to default letter avatar.');
+      setTimeout(() => setProfileSuccessMsg(null), 4000);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to reset avatar.';
+      setProfileErrorMsg(msg);
+    } finally {
+      setIsResettingAvatar(false);
+    }
   };
 
   const handleSaveGeneral = (e: React.FormEvent) => {
@@ -223,11 +335,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           onClick={() => setActiveTab('profile')}
           role="tab"
           aria-selected={activeTab === 'profile'}
-          className={`flex items-center gap-2 pb-3 px-2 sm:px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-            activeTab === 'profile'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
-              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
+          className={`flex items-center gap-2 pb-3 px-2 sm:px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${activeTab === 'profile'
+            ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
+            : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+            }`}
         >
           <User className="w-3.5 h-3.5" />
           <span>My Profile &amp; Role</span>
@@ -237,11 +348,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           onClick={() => setActiveTab('workspace')}
           role="tab"
           aria-selected={activeTab === 'workspace'}
-          className={`flex items-center gap-2 pb-3 px-2 sm:px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-            activeTab === 'workspace'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
-              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
+          className={`flex items-center gap-2 pb-3 px-2 sm:px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${activeTab === 'workspace'
+            ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
+            : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+            }`}
         >
           <Building2 className="w-3.5 h-3.5" />
           <span>General Workspace</span>
@@ -251,11 +361,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           onClick={() => setActiveTab('members')}
           role="tab"
           aria-selected={activeTab === 'members'}
-          className={`flex items-center gap-2 pb-3 px-2 sm:px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-            activeTab === 'members'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
-              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
+          className={`flex items-center gap-2 pb-3 px-2 sm:px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${activeTab === 'members'
+            ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
+            : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+            }`}
         >
           <Users className="w-3.5 h-3.5" />
           <span>Members &amp; Permissions ({members.length})</span>
@@ -265,11 +374,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           onClick={() => setActiveTab('security')}
           role="tab"
           aria-selected={activeTab === 'security'}
-          className={`flex items-center gap-2 pb-3 px-2 sm:px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-            activeTab === 'security'
-              ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
-              : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-          }`}
+          className={`flex items-center gap-2 pb-3 px-2 sm:px-3 text-xs font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${activeTab === 'security'
+            ? 'border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400'
+            : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+            }`}
         >
           <ShieldCheck className="w-3.5 h-3.5" />
           <span>Security &amp; Audit</span>
@@ -283,7 +391,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="space-y-6">
           {/* Status Banners (Anti-slop 5 states) */}
           {profileSuccessMsg && (
-            <div 
+            <div
               role="status"
               className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-center gap-3 text-emerald-800 dark:text-emerald-300 text-xs font-medium animate-in fade-in"
             >
@@ -293,7 +401,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           )}
 
           {profileErrorMsg && (
-            <div 
+            <div
               role="alert"
               className="p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl flex items-center justify-between text-rose-800 dark:text-rose-300 text-xs font-medium animate-in fade-in"
             >
@@ -355,96 +463,166 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
 
           {/* Profile Form */}
-          <form 
+          <form
             onSubmit={handleProfileSubmit}
             className="bg-white dark:bg-slate-900 rounded-xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xs space-y-6"
           >
             {/* 1. Avatar Customization */}
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-3">
-                1. Avatar Customization
-              </label>
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  1. Profile Picture
+                </label>
+                <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                  PNG, JPG, WEBP • Max 1MB
+                </span>
+              </div>
 
-              <div className="flex flex-col md:flex-row gap-6 items-start">
-                {/* Active Avatar Preview with badge */}
-                <div className="flex flex-col items-center gap-2 shrink-0">
+              {/* Upload Error Banner */}
+              {uploadError && (
+                <div
+                  role="alert"
+                  className="mb-4 p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl flex items-center justify-between text-rose-800 dark:text-rose-300 text-xs font-medium animate-in fade-in"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                    <span>{uploadError}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setUploadError(null)}
+                    className="text-[11px] underline hover:no-underline font-semibold cursor-pointer shrink-0 ml-2"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              )}
+
+              <div className="flex flex-col sm:flex-row gap-6 items-start">
+                {/* Active Avatar Preview with badge and Reset Action */}
+                <div className="flex flex-col items-center gap-2.5 shrink-0 w-full sm:w-auto">
                   <div className="relative group">
-                    <img 
-                      src={avatar} 
-                      alt={name}
-                      onError={() => setAvatar(currentUser.avatar)}
-                      className="w-20 h-20 rounded-2xl object-cover ring-2 ring-blue-600/30 dark:ring-blue-500/30 shadow-md transition-transform group-hover:scale-105"
-                    />
-                    <span 
-                      className="w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white dark:border-slate-900 absolute -bottom-0.5 -right-0.5"
-                      title="Workspace Online Status" 
+                    <UserAvatar
+                      name={name}
+                      avatar={avatar}
+                      size="xl"
+                      showOnlineIndicator={true}
+                      isOnline={true}
+                      className="shadow-md ring-2 ring-blue-600/30 dark:ring-blue-500/30 transition-transform group-hover:scale-105"
                     />
                   </div>
-                  <span className="text-[10px] text-slate-400 font-medium">Live Preview</span>
+
+                  <div className="flex flex-col items-center gap-1.5">
+                    {avatar ? (
+                      <div className="flex items-center gap-1.5 flex-wrap justify-center">
+                        <button
+                          type="button"
+                          onClick={handleOpenReCrop}
+                          disabled={isUploading || isResettingAvatar}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                          title="Re-crop and adjust 1:1 framing of this photo"
+                        >
+                          <CropIcon className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                          <span>Edit crop</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={handleResetToInitial}
+                          disabled={isResettingAvatar || isUploading}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg border border-transparent hover:border-rose-200 dark:hover:border-rose-900/50 transition-colors cursor-pointer disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+                          title="Remove uploaded image and revert to first-letter initial"
+                        >
+                          {isResettingAvatar ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <RotateCcw className="w-3 h-3" />
+                          )}
+                          <span>Reset</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-md">
+                        Using initial: &quot;{(name.trim() || 'U').charAt(0).toUpperCase()}&quot;
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Avatar Selection Options */}
-                <div className="flex-1 space-y-3 w-full">
-                  <div>
-                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-2">
-                      Choose from Persona Presets
-                    </span>
-                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
-                      {AVATAR_PRESETS.map((preset) => {
-                        const isSelected = avatar === preset.url;
-                        return (
-                          <button
-                            key={preset.id}
-                            type="button"
-                            onClick={() => setAvatar(preset.url)}
-                            className={`group relative p-1 rounded-xl border transition-all cursor-pointer flex flex-col items-center gap-1 ${
-                              isSelected
-                                ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-950/40 ring-2 ring-blue-600/20'
-                                : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-slate-50/50 dark:bg-slate-950/40'
-                            }`}
-                          >
-                            <img 
-                              src={preset.url} 
-                              alt={preset.label} 
-                              className="w-9 h-9 rounded-lg object-cover"
-                            />
-                            <span className="text-[9px] font-medium text-slate-600 dark:text-slate-400 truncate max-w-[56px]">
-                              {preset.label.split(' ')[0]}
-                            </span>
-                            {isSelected && (
-                              <div className="absolute top-1 right-1 w-3.5 h-3.5 bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xs">
-                                <Check className="w-2.5 h-2.5" />
-                              </div>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
+                {/* UploadThing Dropzone & Uploader */}
+                <div className="flex-1 w-full space-y-3">
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => {
+                      if (!isUploading) {
+                        fileInputRef.current?.click();
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if ((e.key === 'Enter' || e.key === ' ') && !isUploading) {
+                        e.preventDefault();
+                        fileInputRef.current?.click();
+                      }
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Upload profile picture (Max 1MB)"
+                    className={`relative border-2 border-dashed rounded-xl p-5 sm:p-6 text-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${isDragging
+                      ? 'border-blue-500 bg-blue-50/60 dark:bg-blue-950/40 ring-2 ring-blue-500/20'
+                      : 'border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500/60 bg-slate-50/40 dark:bg-slate-950/40 hover:bg-slate-50 dark:hover:bg-slate-950/60'
+                      } ${isUploading ? 'pointer-events-none opacity-80' : ''}`}
+                  >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp"
+                      onChange={handleFileInputChange}
+                      className="hidden"
+                      aria-hidden="true"
+                    />
+
+                    {isUploading ? (
+                      <div className="flex flex-col items-center gap-2.5 py-3 animate-in fade-in">
+                        <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs">
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-900 dark:text-white">
+                            Uploading image to UploadThing...
+                          </p>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                            Saving and optimizing your profile picture.
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-2 py-2">
+                        <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-blue-600 dark:text-blue-400 shadow-2xs group-hover:scale-105 transition-transform">
+                          <Upload className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-slate-900 dark:text-white">
+                            <span className="text-blue-600 dark:text-blue-400 underline hover:no-underline">
+                              Click to choose an image
+                            </span>{' '}
+                            or drag &amp; drop
+                          </p>
+                          <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                            PNG, JPG, or WEBP up to 1MB
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Custom URL Option */}
-                  <div className="pt-2">
-                    <label htmlFor="custom-avatar-url" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                      Or use custom image URL
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        id="custom-avatar-url"
-                        type="url"
-                        placeholder="https://example.com/my-avatar.jpg"
-                        value={customAvatarInput}
-                        onChange={(e) => setCustomAvatarInput(e.target.value)}
-                        className="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-1.5 text-xs text-slate-900 dark:text-white transition-colors"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleApplyCustomAvatarUrl}
-                        disabled={!customAvatarInput.trim()}
-                        className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold disabled:opacity-50 transition-colors cursor-pointer"
-                      >
-                        Apply URL
-                      </button>
-                    </div>
+                  {/* Microcopy Helper */}
+                  <div className="flex items-start gap-1.5 text-[11px] text-slate-400 dark:text-slate-500 px-1">
+                    <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-slate-400" />
+                    <span>
+                      Your photo is hosted via UploadThing and securely linked to your account. Removing your photo automatically reverts to your initial letter badge.
+                    </span>
                   </div>
                 </div>
               </div>
@@ -467,11 +645,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                         key={roleOpt}
                         type="button"
                         onClick={() => setSelectedRole(roleOpt)}
-                        className={`px-3 py-2 rounded-lg text-xs font-semibold border text-left flex items-center justify-between transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-500 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500/20'
-                            : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
-                        }`}
+                        className={`px-3 py-2 rounded-lg text-xs font-semibold border text-left flex items-center justify-between transition-all cursor-pointer ${isSelected
+                          ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-500 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500/20'
+                          : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+                          }`}
                       >
                         <span className="truncate">{roleOpt}</span>
                         {isSelected && <Check className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />}
@@ -519,11 +696,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className={`w-full bg-slate-50 dark:bg-slate-950 border rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white transition-colors ${
-                      isNameEmpty 
-                        ? 'border-rose-400 focus:border-rose-500 ring-1 ring-rose-400/20' 
-                        : 'border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none'
-                    }`}
+                    className={`w-full bg-slate-50 dark:bg-slate-950 border rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white transition-colors ${isNameEmpty
+                      ? 'border-rose-400 focus:border-rose-500 ring-1 ring-rose-400/20'
+                      : 'border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none'
+                      }`}
                   />
                   {isNameEmpty && (
                     <span className="text-[11px] text-rose-500 font-medium mt-1 block">
@@ -747,10 +923,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {members.map(member => (
                 <div key={member.id} className="px-6 py-3.5 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <img 
-                      src={member.avatar} 
-                      alt={member.name} 
-                      className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" 
+                    <UserAvatar
+                      name={member.name}
+                      username={member.username}
+                      email={member.email}
+                      avatar={member.avatar}
+                      size="md"
+                      className="ring-1 ring-slate-200 dark:ring-slate-700"
                     />
                     <div>
                       <div className="flex items-center gap-1.5">
@@ -765,11 +944,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     </div>
                   </div>
 
-                  <span className={`px-2.5 py-0.5 rounded text-[10px] font-semibold border ${
-                    member.id === currentUser.id 
-                      ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
-                      : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-                  }`}>
+                  <span className={`px-2.5 py-0.5 rounded text-[10px] font-semibold border ${member.id === currentUser.id
+                    ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                    : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                    }`}>
                     {member.id === currentUser.id ? 'You (Admin)' : 'Member'}
                   </span>
                 </div>
@@ -810,6 +988,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* 1:1 Profile Picture Crop Modal */}
+      <ImageCropModal
+        isOpen={cropModalOpen}
+        imageSrc={cropImageSrc}
+        fileName={cropFileName}
+        onClose={handleCloseCropModal}
+        onCropComplete={handleCropComplete}
+      />
     </div>
   );
 };

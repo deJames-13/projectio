@@ -25,7 +25,7 @@ If you are not familiar with the different technologies used in this project, pl
 
 ## Roadmap
 
-- [ ] Add image upload using UploadThing
+- [x] Add image upload using UploadThing
 - [ ] Error monitoring with Sentry
 - [ ] Parallel routes & modal routing
 - [ ] Product Analytics (PostHog)

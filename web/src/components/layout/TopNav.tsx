@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Search, Bell, Plus, ChevronRight, Check, LogOut, Building2, Sun, Moon, User } from 'lucide-react';
 import { useTheme } from '~/contexts/ThemeContext';
 import type { Member, NotificationItem, Project, Task } from '~/types';
+import { UserAvatar } from '~/components/ui/UserAvatar';
 
 interface TopNavProps {
   currentTab: string;
@@ -260,11 +261,13 @@ export const TopNav: React.FC<TopNavProps> = ({
             }}
             className="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full cursor-pointer"
           >
-            <img
-              id="user-profile-avatar"
-              src={currentUser.avatar}
-              alt={currentUser.name}
-              className="w-7 h-7 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700 shadow-2xs hover:opacity-90 transition-opacity"
+            <UserAvatar
+              name={currentUser.name}
+              username={currentUser.username}
+              email={currentUser.email}
+              avatar={currentUser.avatar}
+              size="sm"
+              className="hover:opacity-90 transition-opacity shadow-2xs"
             />
           </button>
 

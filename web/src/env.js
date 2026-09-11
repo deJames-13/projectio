@@ -29,6 +29,7 @@ export const env = createEnv({
     SUPABASE_PUBLISHABLE_KEY: z.string().optional(),
     SUPABASE_SECRET_KEY: z.string().optional(),
     SUPABASE_JWKS_URL: z.string().optional(),
+    UPLOADTHING_TOKEN: z.string().optional(),
   },
 
   /**
@@ -76,6 +77,7 @@ export const env = createEnv({
     SUPABASE_JWKS_URL: process.env.SUPABASE_JWKS_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
     NODE_ENV: process.env.NODE_ENV,
   },
   /**

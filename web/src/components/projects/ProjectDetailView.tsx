@@ -26,6 +26,7 @@ import { api } from '~/trpc/react';
 import type { Project, Task, Member, DocItem, TaskStatus } from '~/types';
 import { parseTaskSubtasks, calculateSprintTelemetry, getTaskBlockerStatus } from '~/lib/taskHelpers';
 import { SprintTelemetryBanner } from '../tasks/SprintTelemetryBanner';
+import { UserAvatar } from '~/components/ui/UserAvatar';
 
 interface ProjectDetailViewProps {
   project: Project;
@@ -865,10 +866,13 @@ export const ProjectDetailView: React.FC<ProjectDetailViewProps> = ({
                     className="p-2 flex items-center justify-between rounded-lg border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors"
                   >
                     <div className="flex items-center gap-2 min-w-0">
-                      <img
-                        src={user.avatar ?? 'https://lh3.googleusercontent.com/aida-public/AB6AXuBPiBHbzlRcYg-VzCqa9abHJPIL9BG3hsGjYrg1YuEcxLAvZq_28HBmgi_vVLY6LXX7ZLaii2TP2mN0ONbeRSEH2c_Ibxi5ywHFNR7lVUkiKau_ETuEQldb9XY_n-cmgh6J8dkSEkOfWl_rc3FR_aARvAIKhgC0Yn2AH8nQGjbcdI-uqCEYXbZcXPFET1BithmzsIN6cfFU0OX4wNbW_8_sJ44MN0imLRt2A1p_RKkP2z0-H1SMUwtl'}
-                        alt={user.name ?? 'User'}
-                        className="w-6 h-6 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700"
+                      <UserAvatar
+                        name={user.name}
+                        username={user.username}
+                        email={user.email}
+                        avatar={user.avatar}
+                        size="xs"
+                        className="w-6 h-6 ring-1 ring-slate-200 dark:ring-slate-700"
                       />
                       <div className="min-w-0">
                         <span className="text-xs font-semibold text-slate-900 dark:text-white block truncate">

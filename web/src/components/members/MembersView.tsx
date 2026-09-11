@@ -14,6 +14,7 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import type { Member, Project, Task } from '~/types';
+import { UserAvatar } from '~/components/ui/UserAvatar';
 
 interface MembersViewProps {
   members: Member[];
@@ -275,10 +276,13 @@ export const MembersView: React.FC<MembersViewProps> = ({
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="relative shrink-0">
-                        <img
-                          src={member.avatar}
-                          alt={member.name}
-                          className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-100 dark:ring-slate-800"
+                        <UserAvatar
+                          name={member.name}
+                          username={member.username}
+                          email={member.email}
+                          avatar={member.avatar}
+                          size="lg"
+                          className="w-12 h-12 ring-2 ring-slate-100 dark:ring-slate-800"
                         />
                         {isSelf && (
                           <span
