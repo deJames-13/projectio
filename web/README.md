@@ -32,8 +32,8 @@ If you are not familiar with the different technologies used in this project, pl
 - [ ] API Rate Limiting (Upstash / Redis)
 
 ## Test Deployment with Vercel + Supabase Postgres Database
-- [ ] Vercel
-- [ ] Supabase Postgres (supabse cli)
+- [x] Vercel
+- [x] Supabase Postgres (supabse cli)
 
 ## 911
 - [x] add user profile customizations (image,role,etc.)

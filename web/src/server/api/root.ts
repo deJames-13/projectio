@@ -1,4 +1,5 @@
 import { activityRouter } from "~/server/api/routers/activity";
+import { analyticsRouter } from "~/server/api/routers/analytics";
 import { authRouter } from "~/server/api/routers/auth";
 import { commentRouter } from "~/server/api/routers/comment";
 import { docRouter } from "~/server/api/routers/doc";
@@ -19,6 +20,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   auth: authRouter,
   workspace: workspaceRouter,
+  analytics: analyticsRouter,
   task: taskRouter,
   project: projectRouter,
   member: memberRouter,

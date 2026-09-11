@@ -24,6 +24,7 @@ export default function DashboardPage() {
       activities={workspace.activities}
       milestones={workspace.milestones}
       currentUser={workspace.currentUser}
+      onOpenNewTask={() => workspace.openNewTaskModal()}
     />
   );
 }
