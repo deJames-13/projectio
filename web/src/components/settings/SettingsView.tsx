@@ -137,10 +137,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
   // Validation
   const isNameEmpty = !name.trim();
-  const usernameClean = username.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
   const hasUnsavedChanges = 
     name !== currentUser.name ||
-    username !== (currentUser.username ?? '') ||
     avatar !== currentUser.avatar ||
     effectiveRole !== currentUser.role;
 
@@ -159,7 +157,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       if (onUpdateProfile) {
         await onUpdateProfile({
           name: name.trim(),
-          username: usernameClean || undefined,
           role: effectiveRole || 'Member',
           avatar: avatar.trim(),
         });
@@ -352,7 +349,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 Handle
               </span>
               <p className="text-sm font-mono font-bold text-slate-900 dark:text-white mt-1 truncate">
-                @{currentUser.username || 'unset'}
+                @{currentUser.username ?? 'unset'}
               </p>
             </div>
           </div>
@@ -535,26 +532,33 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   )}
                 </div>
 
-                {/* Username (@handle) */}
+                {/* Username (@handle) - Disabled for now */}
                 <div>
-                  <label htmlFor="profile-username-input" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                    Username Handle
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label htmlFor="profile-username-input" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      Username Handle
+                    </label>
+                    <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
+                      Locked
+                    </span>
+                  </div>
                   <div className="flex items-center">
-                    <span className="bg-slate-100 dark:bg-slate-800 border border-r-0 border-slate-200 dark:border-slate-700 px-3 py-2 text-xs text-slate-500 dark:text-slate-400 rounded-l-lg font-mono">
+                    <span className="bg-slate-100 dark:bg-slate-800/80 border border-r-0 border-slate-200 dark:border-slate-700 px-3 py-2 text-xs text-slate-400 dark:text-slate-500 rounded-l-lg font-mono select-none">
                       @
                     </span>
                     <input
                       id="profile-username-input"
                       type="text"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
+                      disabled
+                      aria-disabled="true"
+                      readOnly
+                      value={currentUser.username ?? username}
                       placeholder="username"
-                      className="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs text-slate-900 dark:text-white rounded-r-lg font-mono focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-colors"
+                      className="flex-1 bg-slate-100/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs text-slate-500 dark:text-slate-400 rounded-r-lg font-mono cursor-not-allowed select-none transition-colors focus:outline-none"
                     />
                   </div>
                   <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
-                    Used for mentions and member searches. Lowercase letters, numbers, hyphens.
+                    Username handle changing is temporarily disabled.
                   </p>
                 </div>
 

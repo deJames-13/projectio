@@ -214,10 +214,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
             Projects & Initiatives
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Create, manage roadmaps, assign team members, and track tasks for each project.
           </p>
         </div>
@@ -225,14 +225,14 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
         <div className="flex items-center gap-3 w-full md:w-auto">
           {/* Search Input */}
           <div className="relative flex-1 md:w-64">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <input 
               id="search-projects-input"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search projects..."
-              className="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none shadow-2xs transition-all"
+              className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none shadow-2xs transition-all"
             />
           </div>
 
@@ -257,13 +257,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
             <article
               key={project.id}
               id={`project-card-${project.id}`}
-              className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 hover:shadow-sm transition-all flex flex-col group relative"
+              className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all flex flex-col group relative"
             >
               {/* Top Header Row with Icon & Status Tag */}
               <div className="flex justify-between items-start mb-3.5">
                 <div 
                   onClick={() => onSelectProject(project.id)}
-                  className="w-10 h-10 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center cursor-pointer hover:bg-blue-50 transition-colors"
+                  className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors"
                 >
                   {getProjectIcon(project.iconType)}
                 </div>
@@ -272,10 +272,10 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                   {/* Status Badge */}
                   <span className={`px-2.5 py-0.5 rounded text-[11px] font-semibold flex items-center gap-1.5 border ${
                     project.status === 'on-track' 
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/80' 
                       : project.status === 'at-risk'
-                      ? 'bg-rose-50 text-rose-700 border-rose-200'
-                      : 'bg-slate-50 text-slate-700 border-slate-200'
+                      ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800/80'
+                      : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                   }`}>
                     {project.status === 'completed' ? (
                       <CheckCircle2 className="w-3 h-3" />
@@ -291,16 +291,16 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
               {/* Title & Description */}
               <div onClick={() => onSelectProject(project.id)} className="cursor-pointer">
-                <h2 className="text-base font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors flex items-center gap-2">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex items-center gap-2">
                   <span>{project.title}</span>
                   {isCreator && (
-                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-medium" title="You created this project">
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 text-[10px] font-medium" title="You created this project">
                       <Crown className="w-2.5 h-2.5" />
                       <span>Owner</span>
                     </span>
                   )}
                 </h2>
-                <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4">
+                <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4">
                   {project.description}
                 </p>
               </div>
@@ -308,11 +308,11 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
               {/* Progress Section */}
               <div className="mt-auto">
                 <div className="mb-1.5 flex justify-between items-center text-xs">
-                  <span className="text-slate-500 font-medium">Progress</span>
-                  <span className="font-bold text-slate-900">{project.progress}%</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">Progress</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{project.progress}%</span>
                 </div>
 
-                <div className="w-full bg-slate-100 rounded-full h-1.5 mb-4 overflow-hidden">
+                <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 mb-4 overflow-hidden">
                   <div 
                     className="h-1.5 rounded-full transition-all duration-500"
                     style={{ 
@@ -329,7 +329,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 </div>
 
                 {/* Footer Info: Avatar Stack + Member Count + Tasks */}
-                <div className="flex justify-between items-center pt-3 border-t border-slate-100">
+                <div className="flex justify-between items-center pt-3 border-t border-slate-100 dark:border-slate-800">
                   {/* Stacked Member Avatars with Manage Button */}
                   <div className="flex items-center gap-2">
                     <div className="flex -space-x-1.5">
@@ -338,12 +338,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                           key={idx}
                           src={m.avatar} 
                           alt={m.name}
-                          className="w-6 h-6 rounded-full border-2 border-white object-cover ring-1 ring-slate-200"
+                          className="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 object-cover ring-1 ring-slate-200 dark:ring-slate-700"
                           title={`${m.name} (${m.role})`}
                         />
                       ))}
                       {project.members.length > 3 && (
-                        <div className="w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-slate-600 font-mono text-[9px]">
+                        <div className="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-mono text-[9px]">
                           +{project.members.length - 3}
                         </div>
                       )}
@@ -356,7 +356,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                         setMemberSearchQuery('');
                         setManagingMembersProject(project);
                       }}
-                      className="p-1 rounded-md text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-colors text-xs font-medium flex items-center gap-1 cursor-pointer"
+                      className="p-1 rounded-md text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors text-xs font-medium flex items-center gap-1 cursor-pointer"
                       title="Manage project members"
                     >
                       <Users className="w-3.5 h-3.5" />
@@ -366,17 +366,17 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
                   {/* Tasks Counter & Action Buttons */}
                   <div className="flex items-center gap-2">
-                    <span className="text-slate-500 text-xs font-medium">
+                    <span className="text-slate-500 dark:text-slate-400 text-xs font-medium">
                       {project.activeTasksCount} Tasks
                     </span>
 
                     {/* Creator Controls */}
                     {isCreator && (
-                      <div className="flex items-center gap-1 border-l border-slate-200 pl-2">
+                      <div className="flex items-center gap-1 border-l border-slate-200 dark:border-slate-700 pl-2">
                         <button
                           type="button"
                           onClick={() => setEditingProject(project)}
-                          className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded transition-colors cursor-pointer"
+                          className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors cursor-pointer"
                           title="Edit project settings"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
@@ -384,7 +384,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                         <button
                           type="button"
                           onClick={() => setDeletingProject(project)}
-                          className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors cursor-pointer"
+                          className="p-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded transition-colors cursor-pointer"
                           title="Delete project"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -399,12 +399,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
         })}
 
         {filteredProjects.length === 0 && (
-          <div className="col-span-full bg-white rounded-xl p-12 border border-slate-200 text-center flex flex-col items-center justify-center space-y-3">
-            <div className="w-12 h-12 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center">
-              <FolderPlus className="w-5 h-5 text-slate-400" />
+          <div className="col-span-full bg-white dark:bg-slate-900 rounded-xl p-12 border border-slate-200 dark:border-slate-800 text-center flex flex-col items-center justify-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+              <FolderPlus className="w-5 h-5 text-slate-400 dark:text-slate-500" />
             </div>
-            <h3 className="text-sm font-semibold text-slate-900">No projects found</h3>
-            <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">No projects found</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
               No initiatives matched your search criteria. Create your first project to organize tasks, colleagues, and documentation.
             </p>
             <button
@@ -419,16 +419,16 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
       {/* ─── 1. Create Project Modal ─────────────────────────────── */}
       {isCreateModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs" role="dialog" aria-modal="true">
-          <div className="w-full max-w-lg bg-white rounded-xl p-6 shadow-xl border border-slate-200 animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" role="dialog" aria-modal="true">
+          <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-xl p-6 shadow-xl border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Create New Project</h3>
-                <p className="text-xs text-slate-500 mt-0.5">You will become the owner and can manage members and tasks.</p>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Create New Project</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">You will become the owner and can manage members and tasks.</p>
               </div>
               <button 
                 onClick={() => setIsCreateModalOpen(false)}
-                className="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                 aria-label="Close modal"
               >
                 <X className="w-4 h-4" />
@@ -437,7 +437,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
             <form onSubmit={handleCreateSubmit} className="space-y-4 mt-4">
               <div>
-                <label htmlFor="create-proj-title" className="text-xs font-semibold text-slate-700 block mb-1">
+                <label htmlFor="create-proj-title" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                   Project Title *
                 </label>
                 <input 
@@ -447,13 +447,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="e.g. Core API Infrastructure"
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   autoFocus
                 />
               </div>
 
               <div>
-                <label htmlFor="create-proj-desc" className="text-xs font-semibold text-slate-700 block mb-1">
+                <label htmlFor="create-proj-desc" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                   Description
                 </label>
                 <textarea 
@@ -462,20 +462,20 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
                   placeholder="High-level objectives, requirements, and sprint milestones..."
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg p-3 text-xs text-slate-900 resize-none"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg p-3 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-none"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label htmlFor="create-proj-status" className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label htmlFor="create-proj-status" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                     Status
                   </label>
                   <select 
                     id="create-proj-status"
                     value={newStatus}
                     onChange={(e) => setNewStatus(e.target.value as 'on-track' | 'at-risk' | 'completed')}
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 font-medium cursor-pointer"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white font-medium cursor-pointer"
                   >
                     <option value="on-track">On Track</option>
                     <option value="at-risk">At Risk</option>
@@ -484,14 +484,14 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 </div>
 
                 <div>
-                  <label htmlFor="create-proj-icon" className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label htmlFor="create-proj-icon" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                     Icon
                   </label>
                   <select 
                     id="create-proj-icon"
                     value={newIcon}
                     onChange={(e) => setNewIcon(e.target.value as 'palette' | 'rocket' | 'web' | 'layers' | 'code')}
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 font-medium cursor-pointer"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white font-medium cursor-pointer"
                   >
                     <option value="layers">Layers (Platform)</option>
                     <option value="palette">Palette (Design)</option>
@@ -502,7 +502,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 </div>
 
                 <div>
-                  <label htmlFor="create-proj-color" className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label htmlFor="create-proj-color" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                     Accent Color
                   </label>
                   <input 
@@ -510,34 +510,34 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                     type="color"
                     value={newColor}
                     onChange={(e) => setNewColor(e.target.value)}
-                    className="w-full h-8 bg-slate-50 border border-slate-200 rounded-lg p-1 cursor-pointer"
+                    className="w-full h-8 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-1 cursor-pointer"
                   />
                 </div>
               </div>
 
               {/* Add Team Members during Project Creation */}
-              <div className="pt-3 border-t border-slate-100 space-y-2.5">
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-700">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                     Add Team Members
                   </label>
-                  <span className="text-[11px] text-slate-500">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
                     {createMemberIds.length} {createMemberIds.length === 1 ? 'member' : 'members'} selected
                   </span>
                 </div>
 
                 <div className="relative">
-                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                   <input
                     type="text"
                     value={createMemberSearch}
                     onChange={(e) => setCreateMemberSearch(e.target.value)}
                     placeholder="Filter team members by name or @username..."
-                    className="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg text-xs text-slate-900"
+                    className="w-full pl-9 pr-3 py-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   />
                 </div>
 
-                <div className="max-h-36 overflow-y-auto space-y-1 rounded-lg border border-slate-200 p-1.5 bg-slate-50/50">
+                <div className="max-h-36 overflow-y-auto space-y-1 rounded-lg border border-slate-200 dark:border-slate-800 p-1.5 bg-slate-50/50 dark:bg-slate-950/50">
                   {members
                     .filter((m) => {
                       if (!createMemberSearch.trim()) return true;
@@ -565,23 +565,23 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                           }}
                           className={`flex items-center justify-between p-2 rounded-lg text-xs cursor-pointer transition-colors ${
                             isSelected || isCreator
-                              ? 'bg-blue-50 border border-blue-200 text-blue-900'
-                              : 'bg-white border border-slate-100 hover:bg-slate-100 text-slate-700'
+                              ? 'bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-200'
+                              : 'bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                           }`}
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <img
                               src={member.avatar}
                               alt={member.name}
-                              className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200"
+                              className="w-5 h-5 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700"
                             />
                             <div className="min-w-0">
                               <span className="font-semibold block truncate">
                                 {member.name}
-                                {isCreator && <span className="ml-1 text-[10px] text-blue-600 font-bold">(You / Owner)</span>}
+                                {isCreator && <span className="ml-1 text-[10px] text-blue-600 dark:text-blue-400 font-bold">(You / Owner)</span>}
                               </span>
                               {member.username && (
-                                <span className="text-[10px] text-slate-400 block truncate">@{member.username}</span>
+                                <span className="text-[10px] text-slate-400 dark:text-slate-500 block truncate">@{member.username}</span>
                               )}
                             </div>
                           </div>
@@ -592,7 +592,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                                 <CheckCircle2 className="w-3 h-3" />
                               </span>
                             ) : (
-                              <span className="w-4 h-4 rounded-full border border-slate-300" />
+                              <span className="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-700" />
                             )}
                           </div>
                         </div>
@@ -601,11 +601,11 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -623,13 +623,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
       {/* ─── 2. Edit Project Modal ───────────────────────────────── */}
       {editingProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs" role="dialog" aria-modal="true">
-          <div className="w-full max-w-lg bg-white rounded-xl p-6 shadow-xl border border-slate-200 animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h3 className="text-base font-bold text-slate-900">Edit Project Settings</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" role="dialog" aria-modal="true">
+          <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-xl p-6 shadow-xl border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Edit Project Settings</h3>
               <button 
                 onClick={() => setEditingProject(null)}
-                className="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -637,7 +637,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
             <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                   Project Title *
                 </label>
                 <input 
@@ -645,31 +645,31 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                   required
                   value={editingProject.title}
                   onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                   Description
                 </label>
                 <textarea 
                   rows={3}
                   value={editingProject.description}
                   onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg p-3 text-xs text-slate-900 resize-none"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg p-3 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                     Status
                   </label>
                   <select 
                     value={editingProject.status}
                     onChange={(e) => setEditingProject({ ...editingProject, status: e.target.value as Project['status'] })}
-                    className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 font-medium cursor-pointer"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white font-medium cursor-pointer"
                   >
                     <option value="on-track">On Track</option>
                     <option value="at-risk">At Risk</option>
@@ -679,7 +679,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-700 block mb-1">
+                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                     Progress ({editingProject.progress}%)
                   </label>
                   <input 
@@ -693,11 +693,11 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
                 <button
                   type="button"
                   onClick={() => setEditingProject(null)}
-                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -715,24 +715,24 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
       {/* ─── 3. Manage Members Modal ─────────────────────────────── */}
       {managingMembersProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs" role="dialog" aria-modal="true">
-          <div className="w-full max-w-lg bg-white rounded-xl p-6 shadow-xl border border-slate-200 animate-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" role="dialog" aria-modal="true">
+          <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-xl p-6 shadow-xl border border-slate-200 dark:border-slate-800 animate-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-600" />
+                <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
                     Manage Project Members
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {managingMembersProject.title}
                   </p>
                 </div>
               </div>
               <button 
                 onClick={() => setManagingMembersProject(null)}
-                className="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -742,13 +742,13 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
             {memberActionFeedback && (
               <div className={`mt-3 p-2.5 rounded-lg text-xs flex items-center gap-2 ${
                 memberActionFeedback.type === 'success' 
-                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' 
-                  : 'bg-rose-50 text-rose-800 border border-rose-200'
+                  ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800' 
+                  : 'bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-800'
               }`}>
                 {memberActionFeedback.type === 'success' ? (
-                  <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 ) : (
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                 )}
                 <span>{memberActionFeedback.message}</span>
               </div>
@@ -757,7 +757,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
             <div className="overflow-y-auto flex-1 pr-1 space-y-5 my-4">
               {/* Current Members Section */}
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
                   Active Project Members ({managingMembersProject.members.length})
                 </h4>
 
@@ -769,27 +769,27 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                     return (
                       <div 
                         key={member.id}
-                        className="flex items-center justify-between p-2.5 rounded-lg border border-slate-100 hover:border-slate-200 bg-slate-50/60"
+                        className="flex items-center justify-between p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 bg-slate-50/60 dark:bg-slate-950/50"
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           <img 
                             src={member.avatar} 
                             alt={member.name} 
-                            className="w-7 h-7 rounded-full object-cover ring-1 ring-slate-200" 
+                            className="w-7 h-7 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" 
                           />
                           <div className="min-w-0">
                             <div className="flex items-center gap-1.5">
-                              <span className="text-xs font-semibold text-slate-900 truncate">
+                              <span className="text-xs font-semibold text-slate-900 dark:text-white truncate">
                                 {member.name}
                               </span>
                               {isProjectCreator && (
-                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-medium">
+                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-[10px] font-medium">
                                   <Crown className="w-2.5 h-2.5" />
                                   Creator
                                 </span>
                               )}
                             </div>
-                            <span className="text-[11px] text-slate-500 block truncate">
+                            <span className="text-[11px] text-slate-500 dark:text-slate-400 block truncate">
                               {member.email ?? member.role}
                             </span>
                           </div>
@@ -800,7 +800,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                           <button
                             type="button"
                             onClick={() => handleRemoveMemberFromProject(member.id)}
-                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                            className="p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg transition-colors cursor-pointer"
                             title={`Remove ${member.name} from this project`}
                           >
                             <UserMinus className="w-3.5 h-3.5" />
@@ -813,25 +813,25 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
               </div>
 
               {/* Add Members by Username Search */}
-              <div className="pt-3 border-t border-slate-100">
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800">
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Add Team Member
                   </h4>
-                  <span className="text-[11px] text-slate-500">Search username or email</span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">Search username or email</span>
                 </div>
 
                 <div className="relative mb-3">
-                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                   <input 
                     type="text"
                     value={memberSearchQuery}
                     onChange={(e) => setMemberSearchQuery(e.target.value)}
                     placeholder="Search by username (e.g. @sarah), display name, or email..."
-                    className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg text-xs text-slate-900"
+                    className="w-full pl-9 pr-8 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 dark:focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   />
                   {isSearchingUsers && (
-                    <Loader2 className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-blue-600 animate-spin" />
+                    <Loader2 className="w-3.5 h-3.5 absolute right-3 top-1/2 -translate-y-1/2 text-blue-600 dark:text-blue-400 animate-spin" />
                   )}
                 </div>
 
@@ -842,29 +842,29 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                     .map((user) => (
                       <div
                         key={user.id}
-                        className="flex items-center justify-between p-2 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+                        className="flex items-center justify-between p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-850 transition-colors"
                       >
                         <div className="flex items-center gap-2 min-w-0">
                           <img 
                             src={user.avatar ?? 'https://lh3.googleusercontent.com/aida-public/AB6AXuBPiBHbzlRcYg-VzCqa9abHJPIL9BG3hsGjYrg1YuEcxLAvZq_28HBmgi_vVLY6LXX7ZLaii2TP2mN0ONbeRSEH2c_Ibxi5ywHFNR7lVUkiKau_ETuEQldb9XY_n-cmgh6J8dkSEkOfWl_rc3FR_aARvAIKhgC0Yn2AH8nQGjbcdI-uqCEYXbZcXPFET1BithmzsIN6cfFU0OX4wNbW_8_sJ44MN0imLRt2A1p_RKkP2z0-H1SMUwtl'} 
                             alt={user.name ?? 'User'}
-                            className="w-6 h-6 rounded-full object-cover ring-1 ring-slate-200" 
+                            className="w-6 h-6 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700" 
                           />
                           <div className="min-w-0">
-                            <div className="text-xs font-semibold text-slate-900 truncate">
+                            <div className="text-xs font-semibold text-slate-900 dark:text-white truncate">
                               {user.name}
                               {user.username && (
-                                <span className="text-slate-400 font-normal ml-1">@{user.username}</span>
+                                <span className="text-slate-400 dark:text-slate-500 font-normal ml-1">@{user.username}</span>
                               )}
                             </div>
-                            <div className="text-[10px] text-slate-500 truncate">{user.email}</div>
+                            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{user.email}</div>
                           </div>
                         </div>
 
                         <button
                           type="button"
                           onClick={() => handleAddMemberToProject(user.id)}
-                          className="px-2.5 py-1 bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 rounded-md text-[11px] font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                          className="px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-600 hover:text-white text-blue-700 dark:text-blue-300 rounded-md text-[11px] font-semibold transition-colors flex items-center gap-1 cursor-pointer border border-blue-200 dark:border-blue-800"
                         >
                           <UserPlus className="w-3 h-3" />
                           <span>Add</span>
@@ -873,7 +873,7 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                     ))}
 
                   {memberSearchQuery.trim() !== '' && searchResults.filter((u) => !managingMembersProject.members.some((m) => m.id === u.id)).length === 0 && !isSearchingUsers && (
-                    <div className="p-4 text-center text-xs text-slate-400 bg-slate-50 rounded-lg">
+                    <div className="p-4 text-center text-xs text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-950 rounded-lg">
                       No matching users found for &quot;{memberSearchQuery}&quot;
                     </div>
                   )}
@@ -882,11 +882,11 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
             </div>
 
             {/* Modal Footer */}
-            <div className="pt-3 border-t border-slate-100 flex justify-end">
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
               <button
                 type="button"
                 onClick={() => setManagingMembersProject(null)}
-                className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"
+                className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 cursor-pointer"
               >
                 Done
               </button>
@@ -897,22 +897,22 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
 
       {/* ─── 4. Delete Project Confirmation Modal ─────────────────── */}
       {deletingProject && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs" role="dialog" aria-modal="true">
-          <div className="w-full max-w-md bg-white rounded-xl p-6 shadow-xl border border-rose-100 animate-in zoom-in-95 duration-150">
-            <div className="w-10 h-10 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center mb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs" role="dialog" aria-modal="true">
+          <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-xl p-6 shadow-xl border border-rose-100 dark:border-rose-950 animate-in zoom-in-95 duration-150">
+            <div className="w-10 h-10 rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-3">
               <AlertCircle className="w-5 h-5" />
             </div>
 
-            <h3 className="text-base font-bold text-slate-900">Delete Project?</h3>
-            <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
-              Are you sure you want to delete <span className="font-semibold text-slate-900">&quot;{deletingProject.title}&quot;</span>? This will permanently delete the project and all tied documentation and tasks.
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">Delete Project?</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">
+              Are you sure you want to delete <span className="font-semibold text-slate-900 dark:text-white">&quot;{deletingProject.title}&quot;</span>? This will permanently delete the project and all tied documentation and tasks.
             </p>
 
-            <div className="flex justify-end gap-2 mt-6 pt-3 border-t border-slate-100">
+            <div className="flex justify-end gap-2 mt-6 pt-3 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setDeletingProject(null)}
-                className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
               >
                 Cancel
               </button>

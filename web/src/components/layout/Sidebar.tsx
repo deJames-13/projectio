@@ -12,7 +12,6 @@ import {
   Settings, 
   Plus, 
   ChevronsUpDown,
-  Compass,
   Users
 } from 'lucide-react';
 import { useTheme } from '~/contexts/ThemeContext';
@@ -140,16 +139,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           );
         })}
 
-        <div className="pt-2">
-          <Link
-            id="nav-link-landing"
-            href="/"
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100 transition-all text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-          >
-            <Compass className="w-4 h-4 text-slate-400" />
-            <span>Overview &amp; Tour</span>
-          </Link>
-        </div>
 
         {/* Settings at Bottom */}
         <div className="mt-auto pt-3 border-t border-slate-200 dark:border-slate-800">

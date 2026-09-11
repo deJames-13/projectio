@@ -52,10 +52,10 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = ({
   // 1. Auth Loading State
   if (authLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs font-medium text-slate-500">Checking credentials…</span>
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Checking credentials…</span>
         </div>
       </div>
     );
@@ -64,14 +64,14 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = ({
   // 2. Data Connection Error State
   if (workspace.hasError && workspace.tasks.length === 0 && workspace.projects.length === 0) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-white border border-rose-200 rounded-xl p-6 shadow-sm text-center space-y-4">
-          <div className="w-12 h-12 bg-rose-50 text-rose-600 rounded-full flex items-center justify-center mx-auto">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-rose-200 dark:border-rose-900/60 rounded-xl p-6 shadow-sm text-center space-y-4">
+          <div className="w-12 h-12 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 rounded-full flex items-center justify-center mx-auto">
             <AlertCircle className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Database Connection Error</h2>
-            <p className="text-xs text-slate-500 mt-1">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Database Connection Error</h2>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               Could not retrieve workspace entities from the database. Please check your network and database credentials.
             </p>
           </div>
@@ -90,39 +90,39 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = ({
   // 3. Initial Skeleton Loading State
   if (workspace.isInitialLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-900 flex font-sans animate-pulse">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex font-sans animate-pulse">
         {/* Sidebar Skeleton */}
-        <div className="w-[250px] bg-white border-r border-slate-200 p-4 flex flex-col justify-between fixed h-full">
+        <div className="w-[250px] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 p-4 flex flex-col justify-between fixed h-full">
           <div className="space-y-6">
             <div className="flex items-center gap-2.5 px-2">
-              <div className="w-8 h-8 rounded-lg bg-slate-200" />
-              <div className="h-4 w-24 bg-slate-200 rounded" />
+              <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800" />
+              <div className="h-4 w-24 bg-slate-200 dark:bg-slate-800 rounded" />
             </div>
             <div className="space-y-2">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-8 bg-slate-100 rounded-lg w-full" />
+                <div key={i} className="h-8 bg-slate-100 dark:bg-slate-800/60 rounded-lg w-full" />
               ))}
             </div>
           </div>
-          <div className="h-10 bg-slate-100 rounded-lg" />
+          <div className="h-10 bg-slate-100 dark:bg-slate-800/60 rounded-lg" />
         </div>
 
         {/* Content Skeleton */}
-        <div className="flex-1 ml-[250px] min-h-screen flex flex-col">
-          <div className="h-14 bg-white border-b border-slate-200 px-8 flex items-center justify-between">
-            <div className="h-5 w-48 bg-slate-200 rounded" />
+        <div className="flex-1 ml-[250px] min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950">
+          <div className="h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 flex items-center justify-between">
+            <div className="h-5 w-48 bg-slate-200 dark:bg-slate-800 rounded" />
             <div className="flex items-center gap-3">
-              <div className="h-8 w-40 bg-slate-100 rounded-lg" />
-              <div className="w-8 h-8 rounded-full bg-slate-200" />
+              <div className="h-8 w-40 bg-slate-100 dark:bg-slate-800 rounded-lg" />
+              <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800" />
             </div>
           </div>
           <main className="p-8 max-w-7xl mx-auto w-full space-y-6">
-            <div className="h-8 w-64 bg-slate-200 rounded" />
+            <div className="h-8 w-64 bg-slate-200 dark:bg-slate-800 rounded" />
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-28 bg-white rounded-xl border border-slate-200 p-4 space-y-3">
-                  <div className="h-4 w-20 bg-slate-100 rounded" />
-                  <div className="h-7 w-16 bg-slate-200 rounded" />
+                <div key={i} className="h-28 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-4 space-y-3">
+                  <div className="h-4 w-20 bg-slate-100 dark:bg-slate-800 rounded" />
+                  <div className="h-7 w-16 bg-slate-200 dark:bg-slate-800 rounded" />
                 </div>
               ))}
             </div>
@@ -179,7 +179,7 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex font-sans selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex font-sans selection:bg-blue-600 selection:text-white transition-colors duration-200">
       {/* Fixed Left Sidebar */}
       <Sidebar
         currentTab={currentTab}
@@ -195,7 +195,7 @@ export const WorkspaceShell: React.FC<WorkspaceShellProps> = ({
       />
 
       {/* Main Content Area (offset by sidebar width 250px) */}
-      <div className="flex-1 ml-[250px] min-h-screen flex flex-col">
+      <div className="flex-1 ml-[250px] min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
         {/* Sticky Top Navigation Bar */}
         <TopNav
           currentTab={currentTab}

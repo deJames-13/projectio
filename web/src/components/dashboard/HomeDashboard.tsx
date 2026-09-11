@@ -58,10 +58,10 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       {/* Top Greeting Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
             Good morning, {currentUser.name.split(' ')[0]}
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Here&apos;s what&apos;s happening across your active sprint and workspace today.
           </p>
         </div>
@@ -73,8 +73,8 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             onClick={() => setActiveFilter('assigned')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
               activeFilter === 'assigned'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                ? 'bg-slate-900 text-white dark:bg-blue-600 dark:text-white shadow-xs'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Assigned to me
@@ -85,8 +85,8 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             onClick={() => setActiveFilter('due_week')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
               activeFilter === 'due_week'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                ? 'bg-slate-900 text-white dark:bg-blue-600 dark:text-white shadow-xs'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Due this week
@@ -97,8 +97,8 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             onClick={() => setActiveFilter('p0')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
               activeFilter === 'p0'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                ? 'bg-slate-900 text-white dark:bg-blue-600 dark:text-white shadow-xs'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
@@ -110,8 +110,8 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
             onClick={() => setActiveFilter('recent')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
               activeFilter === 'recent'
-                ? 'bg-slate-900 text-white shadow-xs'
-                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                ? 'bg-slate-900 text-white dark:bg-blue-600 dark:text-white shadow-xs'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             Recent Updates
@@ -122,57 +122,57 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
       {/* 4 Stat Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Card 1: Active Tasks */}
-        <div id="stat-card-active" className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between">
+        <div id="stat-card-active" className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Active Tasks</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Active Tasks</span>
+            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-2xl font-bold text-slate-900 tracking-tight">
+            <span className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               {activeTasksCount}
             </span>
-            <span className="text-[11px] font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200">
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
               {activeTasksCount > 0 ? `${activeTasksCount} open` : "None"}
             </span>
           </div>
         </div>
 
         {/* Card 2: Due This Week */}
-        <div id="stat-card-due" className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between">
+        <div id="stat-card-due" className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Due This Week</span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Due This Week</span>
+            <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center">
               <Calendar className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-2xl font-bold text-slate-900 tracking-tight">
+            <span className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               {dueThisWeekCount}
             </span>
-            <span className="text-[11px] font-medium text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200">
+            <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
               Scheduled
             </span>
           </div>
         </div>
 
         {/* Card 3: Overdue / Action Required */}
-        <div id="stat-card-overdue" className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between">
+        <div id="stat-card-overdue" className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Action Required</span>
-            <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Action Required</span>
+            <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center">
               <AlertCircle className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-2xl font-bold text-slate-900 tracking-tight">
+            <span className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               {overdueCount}
             </span>
             <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-md border ${
               overdueCount > 0
-                ? "text-rose-600 bg-rose-50 border-rose-100"
-                : "text-slate-500 bg-slate-50 border-slate-200"
+                ? "text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 border-rose-100 dark:border-rose-900/40"
+                : "text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700"
             }`}>
               {overdueCount > 0 ? `${overdueCount} urgent` : "All clear"}
             </span>
@@ -180,23 +180,23 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         </div>
 
         {/* Card 4: Sprint Velocity */}
-        <div id="stat-card-sprint" className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between">
+        <div id="stat-card-sprint" className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">Sprint Progress</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Sprint Progress</span>
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-4">
             <div className="flex items-center justify-between">
-              <span className="text-2xl font-bold text-slate-900 tracking-tight">
+              <span className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
                 {sprintProgress}%
               </span>
-              <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+              <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-100 dark:border-emerald-900/40">
                 {tasks.length > 0 ? "In Progress" : "Ready"}
               </span>
             </div>
-            <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2.5 overflow-hidden">
+            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 mt-2.5 overflow-hidden">
               <div 
                 className="bg-blue-600 h-1.5 rounded-full transition-all duration-500"
                 style={{ width: `${sprintProgress}%` }}
@@ -211,24 +211,24 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         {/* Left Column: My Tasks Today */}
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">Assigned Tasks</h2>
+            <h2 className="text-base font-bold text-slate-900 dark:text-white">Assigned Tasks</h2>
             <button 
               id="btn-view-all-tasks"
               onClick={onViewAllTasks}
-              className="text-xs font-medium text-blue-600 hover:text-blue-700 flex items-center gap-1 cursor-pointer focus:outline-none focus-visible:underline"
+              className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 cursor-pointer focus:outline-none focus-visible:underline"
             >
               <span>View all tasks</span>
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xs divide-y divide-slate-100 overflow-hidden">
+          <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs divide-y divide-slate-100 dark:divide-slate-800 overflow-hidden">
             {filteredTasks.slice(0, 5).map((task) => (
               <div
                 key={task.id}
                 id={`task-row-${task.id}`}
                 onClick={() => onSelectTask(task)}
-                className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors cursor-pointer group"
+                className="p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3.5 flex-1 min-w-0">
                   {/* Checkbox */}
@@ -240,7 +240,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                     className={`w-4.5 h-4.5 rounded border flex items-center justify-center transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                       task.completed 
                         ? 'bg-blue-600 border-blue-600 text-white' 
-                        : 'border-slate-300 hover:border-slate-400 bg-white'
+                        : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 bg-white dark:bg-slate-800'
                     }`}
                     aria-label={`Mark ${task.title} as ${task.completed ? 'incomplete' : 'complete'}`}
                   >
@@ -248,12 +248,12 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                   </button>
 
                   <div className="min-w-0 flex-1">
-                    <h4 className={`text-xs font-semibold text-slate-800 truncate group-hover:text-blue-600 transition-colors ${
-                      task.completed ? 'line-through text-slate-400' : ''
+                    <h4 className={`text-xs font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors ${
+                      task.completed ? 'line-through text-slate-400 dark:text-slate-500' : ''
                     }`}>
                       {task.title}
                     </h4>
-                    <p className="text-[11px] text-slate-400 mt-0.5 truncate">
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 truncate">
                       {task.id} • {task.team} • {task.dueTime}
                     </p>
                   </div>
@@ -263,10 +263,10 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 <div className="flex items-center gap-3 shrink-0 ml-4">
                   <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border ${
                     task.priorityLabel === 'P0' || task.priority === 'High'
-                      ? 'bg-rose-50 text-rose-700 border-rose-200'
+                      ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-900/40'
                       : task.priorityLabel === 'P1'
-                      ? 'bg-amber-50 text-amber-700 border-amber-200'
-                      : 'bg-slate-50 text-slate-600 border-slate-200'
+                      ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900/40'
+                      : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                   }`}>
                     {task.priorityLabel ?? 'P1'}
                   </span>
@@ -274,16 +274,16 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                   <div className="flex -space-x-1.5 items-center">
                     <img 
                       src={task.assignee.avatar} 
-                      alt={task.assignee.name}
-                      className="w-6 h-6 rounded-full object-cover ring-2 ring-white"
+                      alt={task.assignee.name} 
+                      className="w-6 h-6 rounded-full object-cover ring-2 ring-white dark:ring-slate-900"
                       title={task.assignee.name}
                     />
                     {task.coAssignees?.map((co, idx) => (
                       <img 
                         key={idx}
-                        src={co.avatar}
-                        alt={co.name}
-                        className="w-6 h-6 rounded-full object-cover ring-2 ring-white"
+                        src={co.avatar} 
+                        alt={co.name} 
+                        className="w-6 h-6 rounded-full object-cover ring-2 ring-white dark:ring-slate-900"
                         title={co.name}
                       />
                     ))}
@@ -294,11 +294,11 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 
             {filteredTasks.length === 0 && (
               <div className="p-8 text-center flex flex-col items-center justify-center space-y-2">
-                <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center">
-                  <Inbox className="w-4 h-4 text-slate-400" />
+                <div className="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center">
+                  <Inbox className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                 </div>
-                <h4 className="text-xs font-semibold text-slate-800">No tasks in this view</h4>
-                <p className="text-[11px] text-slate-400">Try changing the filter or create a new task.</p>
+                <h4 className="text-xs font-semibold text-slate-800 dark:text-slate-200">No tasks in this view</h4>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500">Try changing the filter or create a new task.</p>
               </div>
             )}
           </div>
@@ -307,32 +307,32 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         {/* Right Column: Sprint Overview */}
         <div className="lg:col-span-5 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">Sprint Burndown</h2>
-            <button className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100 transition-colors" aria-label="Sprint options">
+            <h2 className="text-base font-bold text-slate-900 dark:text-white">Sprint Burndown</h2>
+            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Sprint options">
               <MoreHorizontal className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between">
+          <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs flex flex-col justify-between">
             {/* Burndown Chart Header */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-slate-500">Sprint 24 Trajectory</span>
-                <span className="text-xs font-medium text-emerald-600">8 days remaining</span>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Sprint 24 Trajectory</span>
+                <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">8 days remaining</span>
               </div>
 
               {/* Burndown Curve Graphic */}
-              <div className="w-full h-32 relative bg-slate-50 rounded-lg p-2 border border-slate-200 flex items-end">
+              <div className="w-full h-32 relative bg-slate-50 dark:bg-slate-950 rounded-lg p-2 border border-slate-200 dark:border-slate-800 flex items-end">
                 <svg className="w-full h-full overflow-visible" viewBox="0 0 300 100" preserveAspectRatio="none">
                   {/* Grid Lines */}
-                  <line x1="0" y1="90" x2="300" y2="90" stroke="#E2E8F0" strokeWidth="1" />
-                  <line x1="0" y1="50" x2="300" y2="50" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3,3" />
+                  <line x1="0" y1="90" x2="300" y2="90" className="stroke-slate-200 dark:stroke-slate-800" strokeWidth="1" />
+                  <line x1="0" y1="50" x2="300" y2="50" className="stroke-slate-100 dark:stroke-slate-850" strokeWidth="1" strokeDasharray="3,3" />
                   
                   {/* Ideal Linear Burn-down guideline */}
                   <line 
                     x1="10" y1="20" 
                     x2="290" y2="88" 
-                    stroke="#94A3B8" 
+                    className="stroke-slate-400 dark:stroke-slate-600" 
                     strokeWidth="1.5" 
                     strokeDasharray="4,4" 
                   />
@@ -346,20 +346,20 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                     strokeLinecap="round"
                   />
                   {/* Current position node */}
-                  <circle cx="200" cy="76" r="4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="2" />
+                  <circle cx="200" cy="76" r="4" fill="#2563EB" className="stroke-white dark:stroke-slate-900" strokeWidth="2" />
                 </svg>
               </div>
             </div>
 
             {/* Upcoming Milestones */}
             <div className="mt-6">
-              <span className="text-xs font-semibold text-slate-500 block mb-3">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-3">
                 Key Milestones
               </span>
 
               <div className="space-y-3">
                 {milestones.length === 0 ? (
-                  <div className="text-center py-6 px-4 text-slate-400 text-xs bg-slate-50/50 rounded-lg border border-dashed border-slate-200">
+                  <div className="text-center py-6 px-4 text-slate-400 dark:text-slate-500 text-xs bg-slate-50/50 dark:bg-slate-950/50 rounded-lg border border-dashed border-slate-200 dark:border-slate-800">
                     No upcoming milestones scheduled yet.
                   </div>
                 ) : (
@@ -367,23 +367,23 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                     <div key={ms.id} className="flex items-start gap-3 relative">
                       {/* Stem line */}
                       {idx < milestones.length - 1 && (
-                        <div className="w-[1px] h-7 bg-slate-200 absolute left-[6px] top-3.5"></div>
+                        <div className="w-[1px] h-7 bg-slate-200 dark:bg-slate-800 absolute left-[6px] top-3.5"></div>
                       )}
                       
                       {/* Node Dot */}
                       <div className="mt-1">
                         {ms.status === 'current' ? (
-                          <div className="w-3 h-3 rounded-full bg-blue-600 ring-4 ring-blue-100"></div>
+                          <div className="w-3 h-3 rounded-full bg-blue-600 ring-4 ring-blue-100 dark:ring-blue-950/80"></div>
                         ) : (
-                          <div className="w-3 h-3 rounded-full border-2 border-slate-300 bg-white"></div>
+                          <div className="w-3 h-3 rounded-full border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"></div>
                         )}
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h5 className="text-xs font-semibold text-slate-900 leading-none truncate">
+                        <h5 className="text-xs font-semibold text-slate-900 dark:text-white leading-none truncate">
                           {ms.title}
                         </h5>
-                        <p className="text-[11px] text-slate-400 mt-0.5 truncate">
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 truncate">
                           {ms.date} • {ms.team}
                         </p>
                       </div>
@@ -398,13 +398,13 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
 
       {/* Bottom Section: Recent Activity */}
       <div className="space-y-4">
-        <h2 className="text-base font-bold text-slate-900">Recent Workspace Activity</h2>
+        <h2 className="text-base font-bold text-slate-900 dark:text-white">Recent Workspace Activity</h2>
 
-        <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs divide-y divide-slate-100">
+        <div className="bg-white dark:bg-slate-900 rounded-xl p-5 border border-slate-200 dark:border-slate-800 shadow-xs divide-y divide-slate-100 dark:divide-slate-800">
           {activities.length === 0 ? (
-            <div className="py-8 text-center text-slate-400 text-xs flex flex-col items-center justify-center gap-1.5">
-              <span className="font-medium text-slate-600">No workspace activity yet</span>
-              <span className="text-[11px] text-slate-400">Events and audit trails will appear here as your team works.</span>
+            <div className="py-8 text-center text-slate-400 dark:text-slate-500 text-xs flex flex-col items-center justify-center gap-1.5">
+              <span className="font-medium text-slate-600 dark:text-slate-300">No workspace activity yet</span>
+              <span className="text-[11px] text-slate-400 dark:text-slate-500">Events and audit trails will appear here as your team works.</span>
             </div>
           ) : (
             activities.map((act) => (
@@ -413,25 +413,25 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 <img 
                   src={act.user.avatar} 
                   alt={act.user.name} 
-                  className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-slate-200 mt-0.5"
+                  className="w-7 h-7 rounded-full object-cover shrink-0 ring-1 ring-slate-200 dark:ring-slate-700 mt-0.5"
                 />
 
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-slate-700">
-                    <span className="font-semibold text-slate-900">{act.user.name}</span>{' '}
+                  <p className="text-xs text-slate-700 dark:text-slate-300">
+                    <span className="font-semibold text-slate-900 dark:text-white">{act.user.name}</span>{' '}
                     {act.action}{' '}
-                    <span className="font-medium text-blue-600 hover:underline cursor-pointer">
+                    <span className="font-medium text-blue-600 dark:text-blue-400 hover:underline cursor-pointer">
                       {act.target}
                     </span>
                   </p>
                   
-                  <span className="text-[11px] text-slate-400 mt-0.5 block">
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 block">
                     {act.timeAgo} • {act.board}
                   </span>
 
                   {/* Quoted Comment if applicable */}
                   {act.comment && (
-                    <div className="mt-2 p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 leading-relaxed max-w-2xl">
+                    <div className="mt-2 p-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl">
                       &quot;{act.comment}&quot;
                     </div>
                   )}

@@ -119,15 +119,15 @@ export const MembersView: React.FC<MembersViewProps> = ({
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       {/* ─── 1. Header & Controls ─────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
         <div>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
               <Users className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">Workspace Members</h1>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Workspace Members</h1>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 Manage team directory, discover colleagues by username, and monitor project assignments.
               </p>
             </div>
@@ -147,21 +147,21 @@ export const MembersView: React.FC<MembersViewProps> = ({
       </div>
 
       {/* ─── 2. Search & Filter Bar ──────────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name, @username, email, or role..."
-            className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg text-xs text-slate-900 placeholder:text-slate-400"
+            className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -175,8 +175,8 @@ export const MembersView: React.FC<MembersViewProps> = ({
             onClick={() => setRoleFilter('all')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
               roleFilter === 'all'
-                ? 'bg-slate-900 text-white font-semibold'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                ? 'bg-slate-900 dark:bg-slate-800 text-white font-semibold'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
             }`}
           >
             All Roles ({members.length})
@@ -189,7 +189,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
               className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                 roleFilter === r
                   ? 'bg-blue-600 text-white font-semibold shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
               }`}
             >
               {r}
@@ -203,31 +203,31 @@ export const MembersView: React.FC<MembersViewProps> = ({
         /* Loading Skeleton */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="p-5 bg-white rounded-xl border border-slate-200 animate-pulse space-y-4">
+            <div key={i} className="p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 animate-pulse space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-slate-200" />
+                <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-800" />
                 <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-slate-200 rounded w-1/2" />
-                  <div className="h-3 bg-slate-200 rounded w-1/3" />
+                  <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/2" />
+                  <div className="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/3" />
                 </div>
               </div>
-              <div className="h-10 bg-slate-100 rounded-lg" />
+              <div className="h-10 bg-slate-100 dark:bg-slate-800 rounded-lg" />
             </div>
           ))}
         </div>
       ) : isError ? (
         /* Error State */
-        <div className="p-12 text-center bg-white rounded-xl border border-rose-200 space-y-3">
+        <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-xl border border-rose-200 dark:border-rose-900/60 space-y-3">
           <AlertCircle className="w-8 h-8 text-rose-500 mx-auto" />
-          <h3 className="text-sm font-semibold text-slate-900">Failed to load workspace members</h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto">
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Failed to load workspace members</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
             We encountered an unexpected error while retrieving member profiles.
           </p>
           {onRetry && (
             <button
               type="button"
               onClick={onRetry}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-lg cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Retry</span>
@@ -236,13 +236,13 @@ export const MembersView: React.FC<MembersViewProps> = ({
         </div>
       ) : filteredMembers.length === 0 ? (
         /* Empty State */
-        <div className="p-16 text-center bg-white rounded-xl border border-slate-200 border-dashed space-y-4">
-          <div className="w-12 h-12 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center mx-auto text-slate-400">
+        <div className="p-16 text-center bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 border-dashed space-y-4">
+          <div className="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center mx-auto text-slate-400 dark:text-slate-500">
             <Users className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="text-sm font-bold text-slate-900">No members matched your criteria</h3>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">No members matched your criteria</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
               {searchQuery
                 ? `No team members found matching "${searchQuery}". Try a different name or clear the search.`
                 : 'No members currently in this role filter.'}
@@ -252,7 +252,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
             <button
               type="button"
               onClick={() => { setSearchQuery(''); setRoleFilter('all'); }}
-              className="text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
+              className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer"
             >
               Clear filters
             </button>
@@ -268,7 +268,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
             return (
               <div
                 key={member.id}
-                className="group relative p-5 bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
+                className="group relative p-5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-sm transition-all duration-200 flex flex-col justify-between"
               >
                 <div>
                   {/* Top Row: Avatar + Handle + Badge */}
@@ -278,7 +278,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
                         <img
                           src={member.avatar}
                           alt={member.name}
-                          className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-100"
+                          className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-100 dark:ring-slate-800"
                         />
                         {isSelf && (
                           <span
@@ -292,57 +292,57 @@ export const MembersView: React.FC<MembersViewProps> = ({
 
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <h3 className="text-sm font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+                          <h3 className="text-sm font-bold text-slate-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                             {member.name}
                           </h3>
                           {isSelf && (
-                            <span className="text-[10px] uppercase font-extrabold bg-blue-50 text-blue-700 border border-blue-200 rounded px-1.5 py-0.2">
+                            <span className="text-[10px] uppercase font-extrabold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/80 rounded px-1.5 py-0.2">
                               You
                             </span>
                           )}
                         </div>
                         {member.username && (
-                          <div className="text-[11px] font-mono text-slate-500 truncate">
+                          <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 truncate">
                             @{member.username}
                           </div>
                         )}
                       </div>
                     </div>
 
-                    <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                    <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                       {member.role || 'Member'}
                     </span>
                   </div>
 
                   {/* Email Row */}
-                  <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-4 truncate">
-                    <Mail className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+                  <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-4 truncate">
+                    <Mail className="w-3.5 h-3.5 shrink-0 text-slate-400 dark:text-slate-500" />
                     <span className="truncate">{member.email || 'No email provided'}</span>
                   </div>
 
                   {/* Workload & Projects Summary Chips */}
-                  <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100">
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50">
+                  <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
                       <CheckSquare className="w-4 h-4 text-indigo-500 shrink-0" />
                       <div className="min-w-0">
-                        <span className="text-[10px] text-slate-500 block uppercase font-medium">Assigned Tasks</span>
-                        <span className="text-xs font-bold text-slate-900">{stats.tasksCount} active</span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase font-medium">Assigned Tasks</span>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">{stats.tasksCount} active</span>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50">
+                    <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
                       <FolderOpen className="w-4 h-4 text-emerald-500 shrink-0" />
                       <div className="min-w-0">
-                        <span className="text-[10px] text-slate-500 block uppercase font-medium">Projects</span>
-                        <span className="text-xs font-bold text-slate-900">{stats.projectsList.length} total</span>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 block uppercase font-medium">Projects</span>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">{stats.projectsList.length} total</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Projects Tag List */}
                   {stats.projectsList.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-slate-100">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-1.5">
+                    <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-1.5">
                         Active Projects
                       </span>
                       <div className="flex flex-wrap gap-1">
@@ -351,7 +351,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
                             key={p.id}
                             type="button"
                             onClick={() => onSelectProject?.(p.id)}
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 hover:bg-blue-50 hover:text-blue-700 text-slate-700 transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-blue-950/60 hover:text-blue-700 dark:hover:text-blue-300 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-slate-700/60 transition-colors cursor-pointer"
                           >
                             <span
                               className="w-1.5 h-1.5 rounded-full shrink-0"
@@ -361,7 +361,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
                           </button>
                         ))}
                         {stats.projectsList.length > 3 && (
-                          <span className="text-[10px] text-slate-400 font-medium self-center pl-1">
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium self-center pl-1">
                             +{stats.projectsList.length - 3} more
                           </span>
                         )}
@@ -382,18 +382,18 @@ export const MembersView: React.FC<MembersViewProps> = ({
           role="dialog"
           aria-modal="true"
         >
-          <div className="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150">
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-150">
+            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                   <UserPlus className="w-4 h-4" />
                 </div>
-                <h3 className="font-bold text-sm text-slate-900">Add Colleague to Workspace</h3>
+                <h3 className="font-bold text-sm text-slate-900 dark:text-white">Add Colleague to Workspace</h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsInviteModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -401,7 +401,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
 
             <form onSubmit={handleInviteSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Full Name <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -410,12 +410,12 @@ export const MembersView: React.FC<MembersViewProps> = ({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Sarah Connor"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg text-xs text-slate-900"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
                   Email Address <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -424,16 +424,16 @@ export const MembersView: React.FC<MembersViewProps> = ({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g. sarah@cyberdyne.io"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg text-xs text-slate-900"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Role / Job Title</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Role / Job Title</label>
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg text-xs text-slate-900"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg text-xs text-slate-900 dark:text-white cursor-pointer"
                 >
                   <option value="Frontend Engineer">Frontend Engineer</option>
                   <option value="Backend Architect">Backend Architect</option>
@@ -445,7 +445,7 @@ export const MembersView: React.FC<MembersViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-2">Select Avatar</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2">Select Avatar</label>
                 <div className="flex items-center gap-3">
                   {AVATAR_OPTIONS.map((av, idx) => (
                     <button
@@ -464,11 +464,11 @@ export const MembersView: React.FC<MembersViewProps> = ({
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+              <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsInviteModalOpen(false)}
-                  className="px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                  className="px-3 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>

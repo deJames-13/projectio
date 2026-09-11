@@ -4,9 +4,11 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "~/contexts/ThemeContext";
+import { useAuth } from "~/contexts/AuthContext";
 
 export const LandingFooter: React.FC = () => {
   const { isDark } = useTheme();
+  const { isAuthenticated } = useAuth();
 
   return (
     <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 transition-colors duration-200">
@@ -134,12 +136,20 @@ export const LandingFooter: React.FC = () => {
             © {new Date().getFullYear()} Projectio Technologies Inc. All rights reserved. Built with precision.
           </div>
           <div className="flex items-center gap-6">
-            <Link href="/login" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Sign In
-            </Link>
-            <Link href="/register" className="hover:text-slate-900 dark:hover:text-white transition-colors">
-              Get Started
-            </Link>
+            {isAuthenticated ? (
+              <Link href="/dashboard" className="font-semibold text-blue-600 dark:text-blue-400 hover:underline transition-colors">
+                Go to Dashboard →
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="hover:text-slate-900 dark:hover:text-white transition-colors">
+                  Sign In
+                </Link>
+                <Link href="/register" className="hover:text-slate-900 dark:hover:text-white transition-colors">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

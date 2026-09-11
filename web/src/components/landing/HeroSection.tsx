@@ -4,9 +4,11 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, Terminal, ShieldCheck, Zap, GitBranch } from "lucide-react";
 import { useParallax } from "~/hooks/useParallax";
+import { useAuth } from "~/contexts/AuthContext";
 
 export const HeroSection: React.FC = () => {
   const parallaxOffset = useParallax(0.12);
+  const { isAuthenticated } = useAuth();
 
   return (
     <section className="relative w-full pt-12 sm:pt-16 pb-8 hero-glow-subtle overflow-hidden">
@@ -46,13 +48,23 @@ export const HeroSection: React.FC = () => {
 
         {/* Hero Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8 max-w-md mx-auto">
-          <Link
-            href="/register"
-            className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm shadow-sm hover:shadow transition-all active:scale-98 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 group"
-          >
-            <span>Get Started Free</span>
-            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              href="/dashboard"
+              className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm shadow-sm hover:shadow transition-all active:scale-98 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 group"
+            >
+              <span>Go to Dashboard</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          ) : (
+            <Link
+              href="/register"
+              className="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm shadow-sm hover:shadow transition-all active:scale-98 flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 group"
+            >
+              <span>Get Started Free</span>
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          )}
 
           <a
             href="#interactive-demo"

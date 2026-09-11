@@ -37,10 +37,13 @@ If you are not familiar with the different technologies used in this project, pl
 
 ## 911
 - [x] add user profile customizations (image,role,etc.)
-- [ ] drag and drop Tasks
+- [x] drag and drop Tasks
 - [ ] when project is deleted, delete all tasks? (cascade delete??)
 - [ ] when adding members search for the users database and use the username instead of name and role, dont add images,role just username search 
 
-
-
-
+## UI 
+- [x] google button hover contrast fix
+- [x] fix dark mode in dashboard, the side bar and nav has dark mode but the
+actual content is not. This also appears in profile
+- [x] remove logo in breadcrumbs
+- [x] disable username handle changing for now

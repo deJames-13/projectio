@@ -106,17 +106,17 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-slate-950/70 backdrop-blur-xs"
       role="dialog"
       aria-modal="true"
       aria-labelledby="new-task-modal-title"
     >
-      <div className="w-full max-w-lg bg-white rounded-xl shadow-xl border border-slate-200 p-6 animate-in zoom-in-95 duration-150">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <h3 id="new-task-modal-title" className="text-base font-bold text-slate-900">Create New Task</h3>
+      <div className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 p-6 animate-in zoom-in-95 duration-150">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+          <h3 id="new-task-modal-title" className="text-base font-bold text-slate-900 dark:text-white">Create New Task</h3>
           <button 
             onClick={onClose}
-            className="w-7 h-7 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             aria-label="Close dialog"
           >
             <X className="w-4 h-4" />
@@ -125,7 +125,7 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
-            <label htmlFor="task-title-input" className="text-xs font-semibold text-slate-700 block mb-1">
+            <label htmlFor="task-title-input" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
               Task Title *
             </label>
             <input
@@ -135,13 +135,13 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Implement OAuth single sign-on flow"
-              className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
               autoFocus
             />
           </div>
 
           <div>
-            <label htmlFor="task-desc-input" className="text-xs font-semibold text-slate-700 block mb-1">
+            <label htmlFor="task-desc-input" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
               Description & Specification
             </label>
             <textarea
@@ -150,82 +150,82 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Acceptance criteria, technical constraints, or edge cases..."
-              className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg p-3 text-xs text-slate-900 resize-none leading-relaxed"
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg p-3 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 resize-none leading-relaxed"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="task-project-select" className="text-xs font-semibold text-slate-700 block mb-1">
+              <label htmlFor="task-project-select" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                 Project
               </label>
               <select
                 id="task-project-select"
                 value={projectId}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setProjectId(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 font-medium cursor-pointer"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white font-medium cursor-pointer"
               >
-                <option value="">No Project (General)</option>
+                <option value="" className="dark:bg-slate-900">No Project (General)</option>
                 {projects.map(p => (
-                  <option key={p.id} value={p.id}>{p.title}</option>
+                  <option key={p.id} value={p.id} className="dark:bg-slate-900">{p.title}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label htmlFor="task-assignee-select" className="text-xs font-semibold text-slate-700 block mb-1">
+              <label htmlFor="task-assignee-select" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                 Assignee
               </label>
               <select
                 id="task-assignee-select"
                 value={assigneeId}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setAssigneeId(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 font-medium cursor-pointer"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white font-medium cursor-pointer"
               >
                 {members.map(m => (
-                  <option key={m.id} value={m.id}>{m.name}</option>
+                  <option key={m.id} value={m.id} className="dark:bg-slate-900">{m.name}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label htmlFor="task-status-select" className="text-xs font-semibold text-slate-700 block mb-1">
+              <label htmlFor="task-status-select" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                 Status
               </label>
               <select
                 id="task-status-select"
                 value={status}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setStatus(e.target.value as TaskStatus)}
-                className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 font-medium cursor-pointer"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white font-medium cursor-pointer"
               >
-                <option value="backlog">Backlog</option>
-                <option value="todo">To Do</option>
-                <option value="in-progress">In Progress</option>
-                <option value="review">In Review</option>
-                <option value="done">Done</option>
+                <option value="backlog" className="dark:bg-slate-900">Backlog</option>
+                <option value="todo" className="dark:bg-slate-900">To Do</option>
+                <option value="in-progress" className="dark:bg-slate-900">In Progress</option>
+                <option value="review" className="dark:bg-slate-900">In Review</option>
+                <option value="done" className="dark:bg-slate-900">Done</option>
               </select>
             </div>
 
             <div>
-              <label htmlFor="task-priority-select" className="text-xs font-semibold text-slate-700 block mb-1">
+              <label htmlFor="task-priority-select" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                 Priority
               </label>
               <select
                 id="task-priority-select"
                 value={priority}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPriority(e.target.value as Priority)}
-                className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 font-medium cursor-pointer"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white font-medium cursor-pointer"
               >
-                <option value="High">P0 - High</option>
-                <option value="Medium">P1 - Medium</option>
-                <option value="Low">P2 - Low</option>
+                <option value="High" className="dark:bg-slate-900">P0 - High</option>
+                <option value="Medium" className="dark:bg-slate-900">P1 - Medium</option>
+                <option value="Low" className="dark:bg-slate-900">P2 - Low</option>
               </select>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label htmlFor="task-duetime-input" className="text-xs font-semibold text-slate-700 block mb-1">
+              <label htmlFor="task-duetime-input" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                 Due Date
               </label>
               <input
@@ -233,12 +233,12 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({
                 type="text"
                 value={dueTime}
                 onChange={(e) => setDueTime(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs text-slate-900 dark:text-white"
               />
             </div>
 
             <div>
-              <label htmlFor="task-gitbranch-input" className="text-xs font-semibold text-slate-700 block mb-1">
+              <label htmlFor="task-gitbranch-input" className="text-xs font-semibold text-slate-700 dark:text-slate-300 block mb-1">
                 Git Branch (optional)
               </label>
               <input
@@ -247,22 +247,22 @@ export const NewTaskModal: React.FC<NewTaskModalProps> = ({
                 value={gitBranch}
                 onChange={(e) => setGitBranch(e.target.value)}
                 placeholder="feat/sso-auth"
-                className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white focus:outline-none rounded-lg px-3 py-2 text-xs font-mono text-slate-900"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none rounded-lg px-3 py-2 text-xs font-mono text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
             </div>
           </div>
 
-          <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              className="px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-all cursor-pointer"
+              className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               Create Task
             </button>
