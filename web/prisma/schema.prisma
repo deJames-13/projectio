@@ -1,0 +1,280 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// ─── Multi-Tenant Workspace & User Models ───────────────────
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    username      String?   @unique
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+    password      String?   // Hashed password for Credentials provider
+    role          String    @default("Product Lead")
+    avatar        String?   @db.Text
+
+    // NextAuth Relations
+    accounts      Account[]
+    sessions      Session[]
+
+    // Workspace Relations
+    ownedWorkspaces  Workspace[]       @relation("WorkspaceOwner")
+    workspaceMembers WorkspaceMember[]
+
+    // Domain Relations
+    createdProjects  Project[]         @relation("ProjectCreator")
+    assignedTasks    Task[]            @relation("TaskAssignee")
+    coAssignedTasks  Task[]            @relation("TaskCoAssignees")
+    projectMembers   Project[]         @relation("ProjectMembers")
+    activities       Activity[]
+    authoredDocs     Doc[]
+    notifications    Notification[]
+    comments         Comment[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Workspace {
+    id        String   @id @default(cuid())
+    name      String
+    slug      String   @unique
+    ownerId   String
+    owner     User     @relation("WorkspaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+    members    WorkspaceMember[]
+    projects   Project[]
+    tasks      Task[]
+    activities Activity[]
+    milestones Milestone[]
+    docs       Doc[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([ownerId])
+}
+
+model WorkspaceMember {
+    id          String    @id @default(cuid())
+    workspaceId String
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+    userId      String
+    user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    role        String    @default("Member") // "Owner" | "Admin" | "Member" | "Product Lead"
+
+    createdAt DateTime @default(now())
+
+    @@unique([workspaceId, userId])
+    @@index([workspaceId])
+    @@index([userId])
+}
+
+model Project {
+    id               String    @id @default(cuid()) // e.g. "proj-1"
+    workspaceId      String
+    workspace        Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+    title            String
+    description      String    @db.Text
+    status           String    // "on-track" | "at-risk" | "completed" | "delayed"
+    statusLabel      String
+    progress         Int       @default(0)
+    activeTasksCount Int       @default(0)
+    iconType         String    @default("palette")
+    accentColor      String    @default("#4f46e5")
+    launchedDate     String?
+
+    creatorId        String?
+    creator          User?     @relation("ProjectCreator", fields: [creatorId], references: [id], onDelete: SetNull)
+
+    // Relations
+    members User[] @relation("ProjectMembers")
+    tasks   Task[]
+    docs    Doc[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([workspaceId])
+    @@index([creatorId])
+}
+
+model Task {
+    id            String    @id @default(cuid()) // e.g. "APP-142" or cuid
+    workspaceId   String
+    workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+    title         String
+    description   String?   @db.Text
+    status        String    // "backlog" | "todo" | "in-progress" | "review" | "done"
+    priority      String    // "P0" | "P1" | "P2" | "P3" | "High" | "Medium" | "Low"
+    priorityLabel String
+    team          String
+    dueTime       String?
+    dateRange     String?
+    completed     Boolean   @default(false)
+    gitBranch     String?
+    blocks        String?   // Task ID that this task blocks
+
+    // Relations
+    assigneeId  String
+    assignee    User      @relation("TaskAssignee", fields: [assigneeId], references: [id])
+    coAssignees User[]    @relation("TaskCoAssignees")
+    projectId   String?
+    project     Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+    comments    Comment[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([workspaceId])
+    @@index([status])
+    @@index([assigneeId])
+    @@index([projectId])
+}
+
+model Comment {
+    id        String   @id @default(cuid())
+    text      String   @db.Text
+    timeAgo   String
+
+    authorId  String
+    author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+    taskId    String
+    task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@index([taskId])
+    @@index([authorId])
+}
+
+model Activity {
+    id          String    @id @default(cuid()) // e.g. "act-1"
+    workspaceId String
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+    action   String
+    target   String
+    targetId String?
+    timeAgo  String
+    board    String
+    comment  String?   @db.Text
+    type     String    // "move" | "comment" | "create" | "status_change"
+
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@index([workspaceId])
+    @@index([userId])
+}
+
+model Milestone {
+    id          String    @id @default(cuid()) // e.g. "ms-1"
+    workspaceId String
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+    title  String
+    date   String
+    team   String
+    status String // "completed" | "current" | "upcoming"
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([workspaceId])
+}
+
+model Doc {
+    id          String    @id @default(cuid()) // e.g. "doc-1"
+    workspaceId String
+    workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+    title     String
+    updatedAt String  @map("updated_at_label")
+    category  String
+    content   String  @db.Text
+    starred   Boolean @default(false)
+
+    projectId String?
+    project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+    authorId String
+    author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+    createdAt  DateTime @default(now())
+    modifiedAt DateTime @updatedAt @map("modified_at")
+
+    @@index([workspaceId])
+    @@index([projectId])
+    @@index([authorId])
+    @@index([category])
+}
+
+model Notification {
+    id      String  @id @default(cuid()) // e.g. "notif-1"
+    text    String
+    timeAgo String
+    read    Boolean @default(false)
+    type    String  // "mention" | "assignment" | "milestone" | "comment"
+    taskId  String?
+
+    userId String
+    user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@index([userId])
+    @@index([read])
+}
+
+// ─── NextAuth Models ─────────────────────────────────────────
+
+model Account {
+    id                       String  @id @default(cuid())
+    userId                   String
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? @db.Text
+    access_token             String? @db.Text
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String? @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token_expires_in Int?
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
