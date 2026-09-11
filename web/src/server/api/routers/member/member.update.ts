@@ -7,6 +7,7 @@ export const updateMemberProcedure = protectedProcedure
     z.object({
       id: z.string(),
       name: z.string().min(1).optional(),
+      username: z.string().min(1).optional(),
       role: z.string().min(1).optional(),
       email: z.string().email().optional(),
       avatar: z.string().optional(),

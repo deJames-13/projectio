@@ -31,15 +31,15 @@ If you are not familiar with the different technologies used in this project, pl
 - [ ] Product Analytics (PostHog)
 - [ ] API Rate Limiting (Upstash / Redis)
 
+## Test Deployment with Vercel + Supabase Postgres Database
+- [ ] Vercel
+- [ ] Supabase Postgres (supabse cli)
 
 ## 911
-agy --conversation=1102cb64-2fde-46ce-a4bd-545a1a849fc7
-
-- [ ] add user profile customizations (image,role,etc.)
-- [ ] Fix members showing in workspace??
-- [ ] Add workspace management if theres members?
+- [x] add user profile customizations (image,role,etc.)
 - [ ] drag and drop Tasks
 - [ ] when project is deleted, delete all tasks? (cascade delete??)
+- [ ] when adding members search for the users database and use the username instead of name and role, dont add images,role just username search 
 
 
 

@@ -91,6 +91,12 @@ interface WorkspaceContextType {
 
   // Member Mutations
   handleAddMember: (member: Member) => void;
+  handleUpdateProfile: (data: {
+    name?: string;
+    username?: string;
+    role?: string;
+    avatar?: string;
+  }) => Promise<void>;
 
   // Notification Mutations
   handleMarkNotificationRead: (id: string) => void;
@@ -168,6 +174,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     avatar?: string | null;
     image?: string | null;
     email?: string | null;
+    _count?: { assignedTasks?: number; projectMembers?: number } | null;
   } | null): Member => ({
     id: u?.id ?? 'unknown',
     name: u?.name ?? 'Team Member',
@@ -175,6 +182,8 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     role: u?.role ?? 'Member',
     avatar: u?.avatar ?? u?.image ?? DEFAULT_AVATAR,
     email: u?.email ?? '',
+    assignedTasksCount: u?._count?.assignedTasks ?? 0,
+    projectsCount: u?._count?.projectMembers ?? 0,
   });
 
   const members: Member[] = useMemo(() => {
@@ -494,6 +503,12 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     },
   });
 
+  const updateMemberMutation = api.member.update.useMutation({
+    onSuccess: async () => {
+      await utils.member.invalidate();
+    },
+  });
+
   // Action handlers
   const handleToggleTaskComplete = (taskId: string) => {
     toggleCompleteMutation.mutate({ id: taskId });
@@ -641,6 +656,18 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     });
   };
 
+  const handleUpdateProfile = async (data: {
+    name?: string;
+    username?: string;
+    role?: string;
+    avatar?: string;
+  }) => {
+    await updateMemberMutation.mutateAsync({
+      id: currentUser.id,
+      ...data,
+    });
+  };
+
   const handleMarkNotificationRead = (id: string) => {
     markNotificationReadMutation.mutate({ id });
   };
@@ -716,6 +743,7 @@ export const WorkspaceProvider: React.FC<{ children: ReactNode }> = ({ children 
     handleDeleteDoc,
 
     handleAddMember,
+    handleUpdateProfile,
 
     handleMarkNotificationRead,
     handleMarkAllRead,

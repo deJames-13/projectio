@@ -11,6 +11,7 @@ const DEFAULT_AVATARS = [
 
 export interface RegisterUserInput {
   name: string;
+  username?: string;
   email: string;
   password: string;
 }
@@ -24,12 +25,38 @@ export const authService = {
 
     const existing = await db.user.findUnique({
       where: { email: normalizedEmail },
+      include: { accounts: true },
     });
 
     if (existing) {
+      const providers = existing.accounts.map((a) => a.provider);
+      if (existing.password) providers.push("credentials");
+      const conflictMsg = providers.length > 0
+        ? `User with this email is already signed in with another provider (${providers.join(", ")}).`
+        : "An account with this email already exists";
       throw new TRPCError({
         code: "CONFLICT",
-        message: "An account with this email already exists",
+        message: conflictMsg,
+      });
+    }
+
+    // Username validation & uniqueness
+    let cleanUsername = (input.username ?? "").toLowerCase().trim().replace(/^@/, "");
+    if (!cleanUsername) {
+      cleanUsername = (input.name || normalizedEmail.split("@")[0] || "user")
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, "")
+        .slice(0, 15) || "user";
+    }
+
+    const existingUsername = await db.user.findFirst({
+      where: { username: { equals: cleanUsername, mode: "insensitive" } },
+    });
+
+    if (existingUsername) {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: `Username '@${cleanUsername}' is already taken. Please choose another.`,
       });
     }
 
@@ -39,6 +66,7 @@ export const authService = {
     const user = await db.user.create({
       data: {
         name: input.name.trim(),
+        username: cleanUsername,
         email: normalizedEmail,
         password: hashedPassword,
         role: "Product Lead",

@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Search, Bell, Plus, ChevronRight, Check, LogOut, Building2 } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Search, Bell, Plus, ChevronRight, Check, LogOut, Building2, Sun, Moon, User } from 'lucide-react';
+import { useTheme } from '~/contexts/ThemeContext';
 import type { Member, NotificationItem, Project, Task } from '~/types';
 
 interface TopNavProps {
@@ -35,6 +38,7 @@ export const TopNav: React.FC<TopNavProps> = ({
   selectedTask,
   onNavigateBreadcrumb
 }) => {
+  const { isDark, toggleTheme } = useTheme();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const unreadNotifications = notifications.filter(n => !n.read);
@@ -57,10 +61,30 @@ export const TopNav: React.FC<TopNavProps> = ({
   return (
     <header 
       id="top-navbar"
-      className="h-14 px-8 flex items-center justify-between sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs"
+      className="h-14 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-20 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-2xs transition-colors duration-200"
     >
-      {/* Breadcrumb Trail: dej > Workspace > Project > Tasks > Task */}
-      <nav aria-label="Breadcrumb Navigation" className="flex items-center gap-1.5 text-xs text-slate-500 font-medium overflow-x-auto max-w-[50%] py-1">
+      <div className="flex items-center gap-3 max-w-[65%]">
+        {/* Topbar Brand Logo: perfectly fitted whole image */}
+        <Link
+          href="/dashboard"
+          className="flex items-center shrink-0 rounded-lg p-0.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 group"
+          aria-label="Projectio home"
+        >
+          <div className="flex items-center h-7 py-0.5">
+            <Image
+              src={isDark ? "/images/title-light-500.png" : "/images/title-dark-500.png"}
+              alt="Projectio"
+              width={98}
+              height={30}
+              className="h-full w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              priority
+            />
+          </div>
+        </Link>
+        <div className="h-4 w-px bg-slate-200 dark:bg-slate-800 shrink-0 hidden sm:block" />
+
+        {/* Breadcrumb Trail: dej > Workspace > Project > Tasks > Task */}
+        <nav aria-label="Breadcrumb Navigation" className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-medium overflow-x-auto py-1">
         {/* 1. User Name Handle */}
         <button
           type="button"
@@ -126,26 +150,42 @@ export const TopNav: React.FC<TopNavProps> = ({
           </>
         )}
       </nav>
+      </div>
 
       {/* Center Search / Command Palette Bar */}
       <div className="flex-1 max-w-md mx-6">
         <button
           id="global-search-btn"
           onClick={onOpenCommandPalette}
-          className="w-full flex items-center justify-between px-3 py-1.5 bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-lg text-xs text-slate-500 transition-all group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          className="w-full flex items-center justify-between px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 rounded-lg text-xs text-slate-500 dark:text-slate-400 transition-all group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
         >
           <div className="flex items-center gap-2">
             <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-colors" />
             <span>Search or jump to...</span>
           </div>
-          <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono font-medium text-slate-500 bg-white rounded border border-slate-200 shadow-2xs">
+          <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono font-medium text-slate-500 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-2xs">
             ⌘K
           </kbd>
         </button>
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
+        {/* Theme Toggle Button */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+          title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+        >
+          {isDark ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4 text-slate-700" />
+          )}
+        </button>
+
         {/* Notifications Bell */}
         <div className="relative">
           <button
@@ -247,15 +287,29 @@ export const TopNav: React.FC<TopNavProps> = ({
           {showProfileMenu && (
             <div
               id="profile-popover"
-              className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-150"
+              className="absolute right-0 mt-2 w-60 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 p-2 z-50 animate-in fade-in zoom-in-95 duration-150"
             >
-              <div className="px-3 py-2 border-b border-slate-100 mb-1">
-                <p className="text-xs font-bold text-slate-900 truncate">{currentUser.name}</p>
-                <p className="text-[11px] text-slate-500 truncate">{currentUser.email}</p>
-                <div className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded w-fit">
+              <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800 mb-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{currentUser.name}</p>
+                  <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">{userHandle}</span>
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">{currentUser.email}</p>
+                <div className="mt-1.5 flex items-center gap-1 text-[10px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-900/40 px-2 py-0.5 rounded w-fit">
                   <Building2 className="w-2.5 h-2.5" />
                   <span className="truncate">{workspaceName}</span>
                 </div>
+              </div>
+
+              <div className="py-1">
+                <Link
+                  href="/settings?tab=profile"
+                  onClick={() => setShowProfileMenu(false)}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                >
+                  <User className="w-3.5 h-3.5 text-slate-400" />
+                  <span>My Profile &amp; Role</span>
+                </Link>
               </div>
 
               {onLogout && (
@@ -264,7 +318,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                     setShowProfileMenu(false);
                     onLogout();
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer text-left"
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer text-left border-t border-slate-100 dark:border-slate-800 mt-1 pt-2"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   <span>Sign out</span>

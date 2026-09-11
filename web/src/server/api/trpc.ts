@@ -24,22 +24,38 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
 
   let workspace = null;
-  if (session?.user?.id) {
-    workspace = await db.workspace.findFirst({
-      where: {
-        OR: [
-          { ownerId: session.user.id },
-          { members: { some: { userId: session.user.id } } },
-        ],
-      },
-    });
+  let activeSession = session;
 
-    workspace ??= await initializeUserWorkspace(db, session.user);
+  if (session?.user?.id) {
+    try {
+      const dbUser = await db.user.findUnique({
+        where: { id: session.user.id },
+        select: { id: true, name: true, email: true, avatar: true },
+      });
+
+      if (!dbUser) {
+        // User does not exist in database; invalidate session context
+        activeSession = null;
+      } else {
+        workspace = await db.workspace.findFirst({
+          where: {
+            OR: [
+              { ownerId: dbUser.id },
+              { members: { some: { userId: dbUser.id } } },
+            ],
+          },
+        });
+
+        workspace ??= await initializeUserWorkspace(db, dbUser);
+      }
+    } catch (err) {
+      console.error("[TRPC Context] Failed to resolve or initialize workspace:", err);
+    }
   }
 
   return {
     db,
-    session,
+    session: activeSession,
     workspace,
     ...opts,
   };
@@ -98,8 +114,20 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(async ({ ctx, next }) => {
-    if (!ctx.session?.user) {
+    if (!ctx.session?.user?.id) {
       throw new TRPCError({ code: "UNAUTHORIZED", message: "You must be signed in to access this workspace." });
+    }
+
+    const dbUser = await ctx.db.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: { id: true, name: true, email: true, avatar: true },
+    });
+
+    if (!dbUser) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "User account not found in database. Please register or sign in again.",
+      });
     }
 
     let workspace = ctx.workspace;
@@ -107,18 +135,28 @@ export const protectedProcedure = t.procedure
       workspace = await ctx.db.workspace.findFirst({
         where: {
           OR: [
-            { ownerId: ctx.session.user.id },
-            { members: { some: { userId: ctx.session.user.id } } },
+            { ownerId: dbUser.id },
+            { members: { some: { userId: dbUser.id } } },
           ],
         },
       });
 
-      workspace ??= await initializeUserWorkspace(ctx.db, ctx.session.user);
+      workspace ??= await initializeUserWorkspace(ctx.db, dbUser);
+    }
+
+    if (!workspace) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Active workspace could not be found or initialized." });
     }
 
     return next({
       ctx: {
-        session: { ...ctx.session, user: ctx.session.user },
+        session: {
+          ...ctx.session,
+          user: {
+            ...ctx.session.user,
+            id: dbUser.id,
+          },
+        },
         workspace,
       },
     });

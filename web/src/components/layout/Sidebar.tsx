@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   Home, 
   Inbox, 
@@ -10,11 +11,11 @@ import {
   FileText, 
   Settings, 
   Plus, 
-  Layers, 
   ChevronsUpDown,
   Compass,
   Users
 } from 'lucide-react';
+import { useTheme } from '~/contexts/ThemeContext';
 import type { Member } from '~/types';
 
 interface SidebarProps {
@@ -42,6 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   membersCount,
   docsCount,
 }) => {
+  const { isDark } = useTheme();
   const navItems = [
     { id: 'home', label: 'Dashboard', icon: Home, badge: undefined, href: '/dashboard' },
     { id: 'projects', label: 'Projects', icon: FolderOpen, badge: projectsCount, href: '/projects' },
@@ -55,13 +57,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <aside 
       id="main-sidebar"
       aria-label="Main Navigation Sidebar"
-      className="w-[250px] h-screen bg-white fixed left-0 top-0 flex flex-col p-4 z-30 border-r border-slate-200 select-none shadow-xs"
+      className="w-[250px] h-screen bg-white dark:bg-slate-950 fixed left-0 top-0 flex flex-col p-4 z-30 border-r border-slate-200 dark:border-slate-800 select-none shadow-xs transition-colors duration-200"
     >
       {/* Brand Header */}
       <div className="mb-4">
         <div 
           onClick={() => onSelectTab('home')}
-          className="flex items-center gap-2.5 text-slate-900 cursor-pointer hover:opacity-90 transition-opacity px-2 py-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
+          className="flex items-center gap-2.5 text-slate-900 dark:text-white cursor-pointer hover:opacity-90 transition-opacity px-2 py-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg group"
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
@@ -71,30 +73,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
             }
           }}
         >
-          <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-xs">
-            <Layers className="w-4 h-4 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-base font-bold tracking-tight text-slate-900 leading-tight">Projectio</span>
-            <span className="text-[11px] font-medium text-slate-500">Enterprise Workspace</span>
+          <div className="flex items-center h-8 py-0.5">
+            <Image
+              src={isDark ? "/images/title-light-500.png" : "/images/title-dark-500.png"}
+              alt="Projectio"
+              width={104}
+              height={32}
+              className="h-full w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              priority
+            />
           </div>
         </div>
 
         {/* Workspace Switcher */}
         <div 
           id="workspace-switcher-btn"
-          className="mt-3 flex items-center gap-2.5 px-3 py-2 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100 transition-all border border-slate-200"
+          className="mt-3 flex items-center gap-2.5 px-3 py-2 bg-slate-50 dark:bg-slate-900 rounded-lg cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-all border border-slate-200 dark:border-slate-800"
           role="button"
           tabIndex={0}
         >
           <img 
             src={currentUser.avatar} 
             alt={currentUser.name}
-            className="w-6 h-6 rounded-full object-cover ring-1 ring-slate-200"
+            className="w-6 h-6 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-700"
           />
           <div className="flex-1 min-w-0">
-            <div className="font-semibold text-xs text-slate-800 truncate leading-tight">{workspaceName}</div>
-            <div className="text-[10px] text-slate-500 truncate">{currentUser.role || 'Team Member'}</div>
+            <div className="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate leading-tight">{workspaceName}</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{currentUser.role || 'Team Member'}</div>
           </div>
           <ChevronsUpDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
         </div>
@@ -103,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Navigation Links */}
       <nav className="flex flex-col gap-1 flex-1" aria-label="Sidebar Primary Navigation">
         <div className="px-3 pt-2 pb-1">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Main</span>
+          <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Main</span>
         </div>
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -116,17 +121,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => onSelectTab(item.id)}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                 isActive
-                  ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-100'
-                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-transparent'
+                  ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 font-semibold border border-blue-100 dark:border-blue-800/60'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100 border border-transparent'
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <Icon className={`w-4 h-4 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
                 <span>{item.label}</span>
               </div>
               {item.badge && item.badge > 0 ? (
                 <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${
-                  isActive ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'
+                  isActive ? 'bg-blue-600 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
                 }`}>
                   {item.badge}
                 </span>
@@ -139,7 +144,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <Link
             id="nav-link-landing"
             href="/"
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100 transition-all text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           >
             <Compass className="w-4 h-4 text-slate-400" />
             <span>Overview &amp; Tour</span>
@@ -147,17 +152,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Settings at Bottom */}
-        <div className="mt-auto pt-3 border-t border-slate-200">
+        <div className="mt-auto pt-3 border-t border-slate-200 dark:border-slate-800">
           <button
             id="nav-link-settings"
             onClick={() => onSelectTab('settings')}
             className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
               currentTab === 'settings'
-                ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-100'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-transparent'
+                ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 font-semibold border border-blue-100 dark:border-blue-800/60'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-slate-100 border border-transparent'
             }`}
           >
-            <Settings className={`w-4 h-4 ${currentTab === 'settings' ? 'text-blue-600' : 'text-slate-400'}`} />
+            <Settings className={`w-4 h-4 ${currentTab === 'settings' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`} />
             <span>Settings</span>
           </button>
         </div>

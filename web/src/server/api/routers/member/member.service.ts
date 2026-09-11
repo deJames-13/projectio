@@ -13,6 +13,7 @@ export interface CreateMemberInput {
 export interface UpdateMemberInput {
   id: string;
   name?: string;
+  username?: string;
   role?: string;
   email?: string;
   avatar?: string;
@@ -79,6 +80,14 @@ export const memberService = {
   async getCurrent(db: PrismaClient, userId: string) {
     const user = await db.user.findUnique({
       where: { id: userId },
+      include: {
+        _count: {
+          select: {
+            assignedTasks: true,
+            projectMembers: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -149,6 +158,30 @@ export const memberService = {
       throw new TRPCError({
         code: "NOT_FOUND",
         message: `Member with id '${id}' not found in this workspace`,
+      });
+    }
+
+    if (data.username) {
+      const normalizedUsername = data.username.toLowerCase().trim().replace(/^@/, '');
+      const conflict = await db.user.findFirst({
+        where: {
+          username: { equals: normalizedUsername, mode: "insensitive" },
+          NOT: { id },
+        },
+      });
+      if (conflict) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: `Username '@${normalizedUsername}' is already taken. Please choose another.`,
+        });
+      }
+      data.username = normalizedUsername;
+    }
+
+    if (data.role) {
+      await db.workspaceMember.updateMany({
+        where: { workspaceId, userId: id },
+        data: { role: data.role },
       });
     }
 

@@ -16,10 +16,13 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, otp?: string) => Promise<void>;
+  sendLoginOtp: (email: string, password?: string) => Promise<{ success: boolean; devCode?: string }>;
+  sendRegisterOtp: (email: string, username?: string) => Promise<{ success: boolean; devCode?: string }>;
+  register: (name: string, username: string, email: string, password: string, otp: string) => Promise<void>;
   loginWithDiscord: () => Promise<void>;
-  loginWithFacebook: () => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  loginWithGithub: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => void;
   clearError: () => void;
 }
@@ -50,41 +53,84 @@ function AuthConsumerInternal({ children }: { children: ReactNode }) {
     };
   }, [session]);
 
-  const login = useCallback(async (email: string, password: string): Promise<void> => {
+  const sendLoginOtp = useCallback(async (email: string, password?: string): Promise<{ success: boolean; devCode?: string }> => {
+    setError(null);
+    const res = await fetch('/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, type: 'login' }),
+    });
+
+    const data = (await res.json()) as { error?: string; success?: boolean; devCode?: string };
+    if (!res.ok || !data.success) {
+      const msg = data.error ?? 'Failed to send verification code';
+      setError(msg);
+      throw new Error(msg);
+    }
+
+    return { success: true, devCode: data.devCode };
+  }, []);
+
+  const sendRegisterOtp = useCallback(async (email: string, username?: string): Promise<{ success: boolean; devCode?: string }> => {
+    setError(null);
+    const res = await fetch('/api/auth/send-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, username, type: 'register' }),
+    });
+
+    const data = (await res.json()) as { error?: string; success?: boolean; devCode?: string };
+    if (!res.ok || !data.success) {
+      const msg = data.error ?? 'Failed to send verification code';
+      setError(msg);
+      throw new Error(msg);
+    }
+
+    return { success: true, devCode: data.devCode };
+  }, []);
+
+  const login = useCallback(async (email: string, password: string, otp?: string): Promise<void> => {
     setError(null);
     const result = await signIn('credentials', {
       email: email.toLowerCase().trim(),
       password,
+      otp: otp?.trim() ?? '',
       redirect: false,
     });
 
     if (result?.error) {
-      const msg = 'Invalid email or password';
+      const msg = 'Invalid email, password, or verification code';
       setError(msg);
       throw new Error(msg);
     }
   }, []);
 
   const register = useCallback(
-    async (name: string, email: string, password: string): Promise<void> => {
+    async (name: string, username: string, email: string, password: string, otp: string): Promise<void> => {
       setError(null);
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, username, email, password, otp: otp.trim() }),
       });
 
-      const data = (await res.json()) as { error?: string; success?: boolean };
+      const data = (await res.json()) as {
+        error?: string;
+        success?: boolean;
+        loginOtp?: string;
+      };
+
       if (!res.ok || !data.success) {
         const msg = data.error ?? 'Failed to create account';
         setError(msg);
         throw new Error(msg);
       }
 
-      // Automatically sign in upon registration
+      // Automatically sign in upon registration with issued loginOtp
       const loginRes = await signIn('credentials', {
         email: email.toLowerCase().trim(),
         password,
+        otp: data.loginOtp ?? '',
         redirect: false,
       });
 
@@ -101,9 +147,14 @@ function AuthConsumerInternal({ children }: { children: ReactNode }) {
     await signIn('discord', { callbackUrl: '/dashboard' });
   }, []);
 
-  const loginWithFacebook = useCallback(async (): Promise<void> => {
+  const loginWithGithub = useCallback(async (): Promise<void> => {
     setError(null);
-    throw new Error('Facebook OAuth is not enabled. Please sign in with email and password or Discord.');
+    await signIn('github', { callbackUrl: '/dashboard' });
+  }, []);
+
+  const loginWithGoogle = useCallback(async (): Promise<void> => {
+    setError(null);
+    await signIn('google', { callbackUrl: '/dashboard' });
   }, []);
 
   const logout = useCallback(() => {
@@ -119,9 +170,12 @@ function AuthConsumerInternal({ children }: { children: ReactNode }) {
       isLoading,
       error,
       login,
-      loginWithDiscord,
-      loginWithFacebook,
+      sendLoginOtp,
+      sendRegisterOtp,
       register,
+      loginWithDiscord,
+      loginWithGithub,
+      loginWithGoogle,
       logout,
       clearError,
     }),
@@ -131,9 +185,12 @@ function AuthConsumerInternal({ children }: { children: ReactNode }) {
       isLoading,
       error,
       login,
-      loginWithDiscord,
-      loginWithFacebook,
+      sendLoginOtp,
+      sendRegisterOtp,
       register,
+      loginWithDiscord,
+      loginWithGithub,
+      loginWithGoogle,
       logout,
       clearError,
     ],

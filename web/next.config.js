@@ -8,9 +8,6 @@ import "./src/env.js";
 const config = {
   typescript: {
     ignoreBuildErrors: true
-  },
-  eslint: {
-    ignoreDuringBuilds: true
   }
 };
 

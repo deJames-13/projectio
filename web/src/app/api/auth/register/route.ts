@@ -11,8 +11,14 @@ const DEFAULT_AVATARS = [
 
 export async function POST(req: NextRequest) {
   try {
-    const body = (await req.json()) as { name?: string; email?: string; password?: string };
-    const { name, email, password } = body;
+    const body = (await req.json()) as {
+      name?: string;
+      username?: string;
+      email?: string;
+      password?: string;
+      otp?: string;
+    };
+    const { name, username, email, password, otp } = body;
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -23,9 +29,52 @@ export async function POST(req: NextRequest) {
     }
 
     const normalizedEmail = email.toLowerCase().trim();
-    const existing = await db.user.findUnique({ where: { email: normalizedEmail } });
+    const existing = await db.user.findUnique({ 
+      where: { email: normalizedEmail },
+      include: { accounts: true },
+    });
+
     if (existing) {
-      return NextResponse.json({ error: "An account with this email already exists" }, { status: 409 });
+      const providers = existing.accounts.map((a) => a.provider);
+      if (existing.password) providers.push("credentials");
+      const conflictMsg = providers.length > 0
+        ? `User with this email is already signed in with another provider (${providers.join(", ")}).`
+        : "An account with this email already exists";
+      return NextResponse.json({ error: conflictMsg }, { status: 409 });
+    }
+
+    // Username validation and conflict prevention
+    let cleanUsername = (username ?? "").toLowerCase().trim().replace(/^@/, "");
+    if (!cleanUsername) {
+      cleanUsername = (name || email.split("@")[0] || "user")
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, "")
+        .slice(0, 15) || "user";
+    }
+
+    const existingUsername = await db.user.findFirst({
+      where: { username: { equals: cleanUsername, mode: "insensitive" } },
+    });
+
+    if (existingUsername) {
+      return NextResponse.json(
+        { error: `Username '@${cleanUsername}' is already taken. Please choose another.` },
+        { status: 409 }
+      );
+    }
+
+    // Require and verify OTP code
+    if (!otp) {
+      return NextResponse.json({ error: "Verification code is required" }, { status: 400 });
+    }
+
+    const { verifyOtp, generateOtp } = await import("~/server/auth/otp");
+    const isOtpValid = await verifyOtp(normalizedEmail, otp, "register");
+    if (!isOtpValid) {
+      return NextResponse.json(
+        { error: "Invalid or expired verification code. Please request a new code." },
+        { status: 400 }
+      );
     }
 
     const randomAvatar = DEFAULT_AVATARS[Math.floor(Math.random() * DEFAULT_AVATARS.length)]!;
@@ -34,8 +83,10 @@ export async function POST(req: NextRequest) {
     const user = await db.user.create({
       data: {
         name: name.trim(),
+        username: cleanUsername,
         email: normalizedEmail,
         password: hashedPassword,
+        emailVerified: new Date(),
         role: "Product Lead",
         avatar: randomAvatar,
       },
@@ -43,8 +94,12 @@ export async function POST(req: NextRequest) {
 
     const workspace = await initializeUserWorkspace(db, user);
 
+    // Issue a short-lived login token so client can immediately authenticate
+    const loginOtp = await generateOtp(normalizedEmail, "login");
+
     return NextResponse.json({
       success: true,
+      loginOtp,
       user: {
         id: user.id,
         name: user.name,
