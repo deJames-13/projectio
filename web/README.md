@@ -2,7 +2,6 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="public/images/title-light-500.png">
     <source media="(prefers-color-scheme: light)" srcset="public/images/title-dark-500.png">
-    <img src="public/images/title-dark-500.png" alt="Projectio Logo" width="340" />
   </picture>
 </p>
 
