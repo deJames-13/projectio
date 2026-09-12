@@ -1,8 +1,16 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="public/images/title-light-500.png">
-    <source media="(prefers-color-scheme: light)" srcset="public/images/title-dark-500.png">
-    <img src="web/public/images/title-dark-500.png" alt="Projectio Logo" width="340" />
+    <source media="(prefers-color-scheme: dark)" srcset="web/public/images/logo-light-500.png">
+    <source media="(prefers-color-scheme: light)" srcset="web/public/images/logo-dark-500.png">
+    <img src="web/public/images/logo-light-500.png" alt="Projectio Logo" width="120" />
+  </picture>
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="web/public/images/title-light-500.png">
+    <source media="(prefers-color-scheme: light)" srcset="web/public/images/title-dark-500.png">
+    <img src="web/public/images/title-dark-500.png" alt="Projectio" width="340" />
   </picture>
 </p>
 
