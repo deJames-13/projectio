@@ -8,25 +8,59 @@ import { AuthProvider } from "~/contexts/AuthContext";
 import { ThemeProvider } from "~/contexts/ThemeContext";
 
 /**
+ * Automatically determine the absolute base URL for Open Graph tags.
+ * Social media scrapers (Discord, Twitter, WhatsApp, LinkedIn, etc.) require
+ * a fully qualified, publicly reachable URL (not an unresolvable domain or relative path).
+ *
+ * Priority:
+ * 1. NEXT_PUBLIC_APP_URL (.env)
+ * 2. VERCEL_PROJECT_PRODUCTION_URL / VERCEL_URL (auto-injected on Vercel deployments)
+ * 3. Fallback to http://localhost:3000
+ */
+const getBaseUrl = (): string => {
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    let url = process.env.NEXT_PUBLIC_APP_URL.trim();
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      url = `https://${url}`;
+    }
+    return url.replace(/\/+$/, "");
+  }
+
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL.replace(/\/+$/, "")}`;
+  }
+
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL.replace(/\/+$/, "")}`;
+  }
+
+  return "http://localhost:3000";
+};
+
+const baseUrl = getBaseUrl();
+
+/**
  * Site Image Assets Configuration
  * All public image paths used for SEO, metadata, and social cards.
- * Easily update or swap any asset here. Current assets point to /public/images and /public.
+ * Updated with a dedicated 1200x630 card for standard Open Graph & Twitter summary_large_image previews.
  */
 export const siteImages = {
-  // Social card preview image for Open Graph (Facebook, LinkedIn, Discord, etc.)
-  // Recommended 1200x630; currently using high-res brand logo from /public/images
-  ogImage: "/images/logo-dark-500.png",
-  ogImageWidth: 500,
-  ogImageHeight: 500,
-  ogImageAlt: "Projectio - Corporate & Elegant Project Management",
+  // Primary Open Graph & Twitter banner image (1200x630 - gold standard for social cards)
+  ogImage: "/images/og-image-1200-630.png",
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+  ogImageType: "image/png",
+  ogImageAlt: "Projectio - Corporate & Elegant Project Management Platform",
 
   // Twitter / X card image
-  twitterImage: "/images/logo-dark-500.png",
-  twitterImageAlt: "Projectio - Corporate & Elegant Project Management",
+  twitterImage: "/images/og-image-1200-630.png",
+  twitterImageAlt: "Projectio - Corporate & Elegant Project Management Platform",
 
-  // Brand logos and titles (available in /public/images)
+  // Square logos (500x500)
   logoDark: "/images/logo-dark-500.png",
   logoLight: "/images/logo-light-500.png",
+
+  // Wordmark titles
   titleDark: "/images/title-dark-500.png",
   titleLight: "/images/title-light-500.png",
 
@@ -41,7 +75,6 @@ export const siteImages = {
 
 /**
  * Site Metadata & SEO Configuration
- * Update app name, descriptions, canonical URL, and tracking IDs here.
  */
 export const siteConfig = {
   name: "Projectio",
@@ -50,18 +83,20 @@ export const siteConfig = {
   titleTemplate: "%s | Projectio",
   description:
     "Corporate, elegant project management platform with sprint tracking, tasks, and team collaboration.",
-  url: process.env.NEXT_PUBLIC_APP_URL ?? "https://projectio.dev",
+  url: baseUrl,
   themeColorLight: "#ffffff",
   themeColorDark: "#0E1826", // Deep corporate navy matching dark theme background
   twitterHandle: "@projectio",
   locale: "en_US",
 
   // Google Analytics / Google Tag Manager Measurement ID (e.g. "G-XXXXXXXXXX")
-  // Configure via NEXT_PUBLIC_GA_ID, NEXT_PUBLIC_GTAG_ID, or paste directly here
   gtagId: process.env.NEXT_PUBLIC_GA_ID ?? process.env.NEXT_PUBLIC_GTAG_ID ?? "",
 
   images: siteImages,
 };
+
+// Compute fully qualified absolute OG image URL for scrapers
+const absoluteOgImageUrl = `${siteConfig.url}${siteImages.ogImage.startsWith("/") ? "" : "/"}${siteImages.ogImage}`;
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -96,7 +131,7 @@ export const metadata: Metadata = {
     "Software Development",
   ],
   alternates: {
-    canonical: "/",
+    canonical: siteConfig.url,
   },
   icons: {
     icon: [
@@ -119,11 +154,12 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [
       {
-        url: siteImages.ogImage,
+        url: absoluteOgImageUrl,
+        secureUrl: absoluteOgImageUrl.startsWith("https") ? absoluteOgImageUrl : undefined,
         width: siteImages.ogImageWidth,
         height: siteImages.ogImageHeight,
         alt: siteImages.ogImageAlt,
-        type: "image/png",
+        type: siteImages.ogImageType,
       },
     ],
   },
@@ -135,8 +171,10 @@ export const metadata: Metadata = {
     creator: siteConfig.twitterHandle,
     images: [
       {
-        url: siteImages.twitterImage,
+        url: absoluteOgImageUrl,
         alt: siteImages.twitterImageAlt,
+        width: siteImages.ogImageWidth,
+        height: siteImages.ogImageHeight,
       },
     ],
   },
@@ -174,6 +212,27 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${plusJakartaSans.variable} ${jetbrainsMono.variable}`}>
       <head>
+        {/* Explicit Open Graph & Twitter fallbacks in raw head for scrapers with strict regex parsers */}
+        <meta property="og:title" content={siteConfig.title} />
+        <meta property="og:description" content={siteConfig.description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={siteConfig.url} />
+        <meta property="og:site_name" content={siteConfig.name} />
+        <meta property="og:image" content={absoluteOgImageUrl} />
+        {absoluteOgImageUrl.startsWith("https") && (
+          <meta property="og:image:secure_url" content={absoluteOgImageUrl} />
+        )}
+        <meta property="og:image:type" content={siteImages.ogImageType} />
+        <meta property="og:image:width" content={String(siteImages.ogImageWidth)} />
+        <meta property="og:image:height" content={String(siteImages.ogImageHeight)} />
+        <meta property="og:image:alt" content={siteImages.ogImageAlt} />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={siteConfig.title} />
+        <meta name="twitter:description" content={siteConfig.description} />
+        <meta name="twitter:image" content={absoluteOgImageUrl} />
+        <meta name="twitter:image:alt" content={siteImages.twitterImageAlt} />
+
         {/* Google Analytics / Google Tag Manager (gtag.js) */}
         {siteConfig.gtagId ? (
           <>
